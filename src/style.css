@@ -125,7 +125,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   overflow-y: auto;
   scroll-behavior: smooth;
   scroll-snap-type: y proximity;
-  padding: 180px 8px;
+  padding: 220px 8px;
   border-radius: 18px;
   background: #eae8df;
 }

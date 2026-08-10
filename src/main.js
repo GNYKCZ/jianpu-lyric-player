@@ -120,9 +120,11 @@ async function startApp() {
       activeMeasureIndex = state.timelineMeasureIndex;
       currentCard?.classList.add('current');
       if (currentCard) {
-        const centeredTop = currentCard.offsetTop
-          - (measureList.clientHeight / 2)
-          + (currentCard.clientHeight / 2);
+        const listRect = measureList.getBoundingClientRect();
+        const cardRect = currentCard.getBoundingClientRect();
+        const centeredTop = measureList.scrollTop
+          + (cardRect.top - listRect.top)
+          - ((measureList.clientHeight - currentCard.clientHeight) / 2);
         measureList.scrollTo({
           top: centeredTop,
           behavior: state.isPlaying ? 'smooth' : 'auto',

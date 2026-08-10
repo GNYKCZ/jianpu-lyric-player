@@ -1,0 +1,23 @@
+# Private source material and manually verified commercial-content fixtures
+/private/
+/local-fixtures/
+
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local tooling and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

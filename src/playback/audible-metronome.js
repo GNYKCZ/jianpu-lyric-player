@@ -7,16 +7,16 @@ import {
 
 const DRUM_PROFILES = Object.freeze({
   [METRONOME_ACCENTS.PRIMARY]: Object.freeze({
-    kind: 'kick', frequency: 118, pitchDrop: 105, level: 1, duration: 0.12, decay: 31,
+    kind: 'kick', frequency: 145, pitchDrop: 140, level: 1, duration: 0.09, decay: 46,
   }),
   [METRONOME_ACCENTS.SECONDARY]: Object.freeze({
-    kind: 'kick', frequency: 148, pitchDrop: 74, level: 0.64, duration: 0.1, decay: 39,
+    kind: 'kick', frequency: 172, pitchDrop: 96, level: 0.68, duration: 0.075, decay: 56,
   }),
   [METRONOME_ACCENTS.BEAT]: Object.freeze({
-    kind: 'snare', frequency: 190, pitchDrop: 0, level: 0.34, duration: 0.075, decay: 48,
+    kind: 'snare', frequency: 235, pitchDrop: 0, level: 0.42, duration: 0.065, decay: 60,
   }),
   [METRONOME_ACCENTS.OFFBEAT]: Object.freeze({
-    kind: 'hat', frequency: 6800, pitchDrop: 0, level: 0.12, duration: 0.035, decay: 120,
+    kind: 'hat', frequency: 7600, pitchDrop: 0, level: 0.14, duration: 0.03, decay: 140,
   }),
 });
 
@@ -40,7 +40,7 @@ export function renderDrumSamples(sampleRate, accent) {
 
   for (let index = 0; index < samples.length; index += 1) {
     const time = index / sampleRate;
-    const attack = Math.min(1, time / 0.001);
+    const attack = Math.min(1, time / 0.00045);
     const envelope = attack * Math.exp(-time * profile.decay);
     const noise = deterministicNoise(index);
 
@@ -64,9 +64,12 @@ export function renderDrumSamples(sampleRate, accent) {
     phase += (2 * Math.PI * frequency) / sampleRate;
     const body = Math.sin(phase);
     const skin = Math.sin(phase * 1.83);
-    const transient = noise * Math.exp(-time * 120);
-    samples[index] = profile.level * envelope
-      * ((body * 0.78) + (skin * 0.15) + (transient * 0.07));
+    const beater = Math.sin(2 * Math.PI * 2600 * time);
+    const transientEnvelope = Math.exp(-time * 210);
+    const transient = ((beater * 0.65) + (noise * 0.35)) * transientEnvelope;
+    const mixed = (body * 0.55) + (skin * 0.17) + (transient * 0.28);
+    const saturated = Math.tanh(mixed * 1.65) / Math.tanh(1.65);
+    samples[index] = profile.level * envelope * saturated;
   }
   return samples;
 }
@@ -104,7 +107,7 @@ export class AudibleMetronome {
     timeSignature,
     totalTicks,
     enabled = true,
-    volume = 0.65,
+    volume = 0.75,
     startLeadSeconds = 0.025,
     audioContextFactory = defaultAudioContextFactory,
     clickRenderer = defaultClickRenderer,

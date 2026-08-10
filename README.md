@@ -58,7 +58,7 @@ Browser UI
 
 `TimelineEngine` expands the performance sequence and derives musical state from ticks. `MasterPlaybackClock` is the only advancing time source. The controller samples that clock with `requestAnimationFrame` and publishes derived state to the UI; the UI never owns lyric timers.
 
-The audible metronome synthesizes a compact kick, snare, and closed-hi-hat-style kit with Web Audio. Beat 1 uses the strongest kick and beat 3 a lighter kick; beats 2/4 use a short snare. It schedules each hit from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
+The audible metronome synthesizes a compact kick, snare, and closed-hi-hat-style kit with Web Audio. Beat 1 uses the strongest kick and beat 3 a lighter kick; beats 2/4 use a short snare. A short beater transient and gentle saturation keep the kit punchy on ordinary computer speakers without adding a long bass tail. It schedules each hit from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
 
 Its eighth-note pulse follows Groove Scribe's practice-metronome behavior, while the 4/4 strength hierarchy follows conventional quadruple meter: beat 1 is strongest, beat 3 has a secondary accent, beats 2/4 are lighter, and offbeats are soft. The implementation is original Web Audio synthesis; no Groove Scribe code, soundfont, or sample is copied.
 

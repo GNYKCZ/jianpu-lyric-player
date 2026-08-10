@@ -13,25 +13,26 @@ function peak(samples) {
 
 function createAudioHarness() {
   const gainChanges = [];
+  const gain = {
+    value: 0,
+    setTargetAtTime(value, when, constant) {
+      gainChanges.push({ value, when, constant });
+    },
+  };
   const context = {
     state: 'suspended',
     currentTime: 10,
     destination: {},
     createGain() {
       return {
-        gain: {
-          value: 0,
-          setTargetAtTime(value, when, constant) {
-            gainChanges.push({ value, when, constant });
-          },
-        },
+        gain,
         connect() {},
       };
     },
     async resume() { this.state = 'running'; },
     async close() { this.state = 'closed'; },
   };
-  return { context, gainChanges };
+  return { context, gain, gainChanges };
 }
 
 function rms(samples) {
@@ -86,6 +87,7 @@ test('audible metronome schedules a complete 4/4 eighth-note measure on Web Audi
   });
 
   assert.equal(await metronome.prepare(), true);
+  assert.equal(harness.gain.value, 0.75);
   const scheduled = metronome.scheduleFrom({ ticks: 0, bpm: 60, audioStartTime: 10.025 });
   assert.equal(scheduled.length, 8);
   assert.deepEqual(scheduled.map(({ accent }) => accent), [

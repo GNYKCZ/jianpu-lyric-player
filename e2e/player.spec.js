@@ -23,6 +23,11 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('.measure-card')).toHaveCount(11);
   await expect(page.locator('.measure-card.current')).toContainText('主歌');
   await expect(page.locator('.lyric-event.active')).toHaveText('今');
+  await expect(page.locator('#metronome-enabled')).toBeChecked();
+  await expect(page.locator('.measure-card').first().locator('.pulse-primary')).toHaveCount(1);
+  await expect(page.locator('.measure-card').first().locator('.pulse-secondary')).toHaveCount(1);
+  await expect(page.locator('.measure-card').first().locator('.pulse-beat')).toHaveCount(2);
+  await expect(page.locator('.measure-card').first().locator('.pulse-offbeat')).toHaveCount(4);
 
   await page.locator('#compact-mode').click();
   await expect(page.locator('#measure-list')).toHaveClass(/compact-mode/);
@@ -38,6 +43,7 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await page.locator('#bpm-input').fill('120');
   await page.locator('#bpm-input').blur();
   await page.locator('#play-button').click();
+  await expect(page.locator('#metronome-enabled')).toBeChecked();
   await expect(page.locator('#play-button')).toContainText('暂停');
   await page.waitForTimeout(250);
   await page.locator('#play-button').click();
@@ -50,6 +56,10 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await page.locator('#restart-button').click();
   await expect(page.locator('#tick-value')).toContainText('0 /');
   await expect(page.locator('#section-value')).toHaveText('主歌');
+
+  await page.locator('#metronome-enabled').uncheck();
+  await expect(page.locator('#metronome-enabled')).not.toBeChecked();
+  await page.locator('#metronome-volume').fill('45');
 });
 
 test('measure seek scrolls the selected measure into view', async ({ page }) => {

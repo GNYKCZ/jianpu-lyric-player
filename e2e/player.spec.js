@@ -1,4 +1,20 @@
 import { test, expect } from '@playwright/test';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { demoSong } from '../test/fixtures/demo-song.js';
+
+const localFixturePath = path.resolve('local-fixtures', 'e2e_local.json');
+
+test.beforeAll(async () => {
+  await mkdir(path.dirname(localFixturePath), { recursive: true });
+  const localSong = structuredClone(demoSong);
+  localSong.metadata.title = 'Local Fixture Test';
+  await writeFile(localFixturePath, JSON.stringify(localSong), 'utf8');
+});
+
+test.afterAll(async () => {
+  await rm(localFixturePath, { force: true });
+});
 
 test('demo player loads and its transport controls stay synchronized', async ({ page }) => {
   await page.goto('/');
@@ -50,4 +66,10 @@ test('measure seek scrolls the selected measure into view', async ({ page }) => 
     const listCenter = listRect.top + (listRect.height / 2);
     return Math.abs(cardCenter - listCenter);
   })).toBeLessThan(12);
+});
+
+test('development server loads an ignored local fixture by query parameter', async ({ page }) => {
+  await page.goto('/?fixture=e2e_local');
+  await expect(page.locator('#song-title')).toHaveText('Local Fixture Test');
+  await expect(page.locator('.measure-card')).toHaveCount(3);
 });

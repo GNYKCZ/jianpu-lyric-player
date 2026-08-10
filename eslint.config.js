@@ -4,6 +4,7 @@ const browserGlobals = {
   fetch: 'readonly',
   requestAnimationFrame: 'readonly',
   URL: 'readonly',
+  URLSearchParams: 'readonly',
 };
 
 export default [
@@ -31,6 +32,21 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: { structuredClone: 'readonly', URL: 'readonly' },
+    },
+    rules: {
+      'no-undef': 'error',
+      'no-unused-vars': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'eqeqeq': 'error',
+    },
+  },
+  {
+    files: ['scripts/**/*.{js,mjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { console: 'readonly', process: 'readonly', URL: 'readonly' },
     },
     rules: {
       'no-undef': 'error',

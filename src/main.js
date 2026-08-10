@@ -1,7 +1,7 @@
 import './style.css';
 import { TimelineEngine } from './engine/timeline-engine.js';
 import { LyricPlaybackController } from './playback/lyric-playback-controller.js';
-import { loadSongDocument } from './song/song-document.js';
+import { loadSelectedSong } from '#song-loader';
 import { step16ToBeatSubdivision, tickToStep16 } from './song/timing.js';
 
 const sectionNames = { VERSE: '主歌', CHORUS: '副歌', OUTRO: '尾句' };
@@ -61,14 +61,8 @@ function createMeasureCard(measure, ppq) {
   return card;
 }
 
-async function loadDemoSong() {
-  const response = await fetch(new URL('./data/demo-song.json', import.meta.url));
-  if (!response.ok) throw new Error(`Demo Song 加载失败（${response.status}）`);
-  return loadSongDocument(await response.json());
-}
-
 async function startApp() {
-  const songDocument = await loadDemoSong();
+  const songDocument = await loadSelectedSong();
   const engine = new TimelineEngine(songDocument);
   const controller = new LyricPlaybackController({ engine });
   const measureList = element('measure-list');

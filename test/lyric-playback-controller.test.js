@@ -22,6 +22,7 @@ test('controller keeps audible scheduling on the same master clock across transp
   const controller = new LyricPlaybackController({
     engine: new TimelineEngine(demoSong),
     metronome,
+    countInSeconds: 0,
     now: () => now,
     scheduleFrame: () => 1,
     cancelFrame: () => {},
@@ -35,6 +36,7 @@ test('controller keeps audible scheduling on the same master clock across transp
     ticks: 0,
     bpm: 64,
     audioStartTime: 5.025,
+    replace: true,
   });
 
   now = 100;
@@ -60,4 +62,53 @@ test('controller keeps audible scheduling on the same master clock across transp
     { type: 'enabled', enabled: false },
     { type: 'volume', volume: 0.5 },
   ]);
+});
+
+test('controller holds tick zero for a five-second count-in before starting playback', async () => {
+  let now = 0;
+  const calls = [];
+  const metronome = {
+    isReady: false,
+    startLeadSeconds: 0.025,
+    context: { currentTime: 10 },
+    async prepare() { this.isReady = true; return true; },
+    scheduleCountIn(options) { calls.push({ type: 'count-in', ...options }); },
+    scheduleFrom(options) { calls.push({ type: 'schedule', ...options }); },
+    cancelScheduled() {},
+    async dispose() {},
+  };
+  const controller = new LyricPlaybackController({
+    engine: new TimelineEngine(demoSong),
+    metronome,
+    now: () => now,
+    scheduleFrame: () => 1,
+    cancelFrame: () => {},
+  });
+
+  await controller.play();
+  assert.equal(controller.clock.anchorTimeMs, 5025);
+  assert.equal(controller.getState().countInRemaining, 5);
+  assert.equal(controller.getState().ticks, 0);
+  assert.deepEqual(calls, [
+    { type: 'count-in', seconds: 5, audioStartTime: 10.025 },
+    {
+      type: 'schedule',
+      ticks: 0,
+      bpm: 64,
+      audioStartTime: 15.025,
+      replace: false,
+    },
+  ]);
+
+  now = 3025;
+  assert.equal(controller.getState().countInRemaining, 2);
+  assert.equal(controller.getState().ticks, 0);
+
+  now = 5025;
+  assert.equal(controller.getState().countInRemaining, null);
+  assert.equal(controller.getState().ticks, 0);
+
+  now = 6025;
+  assert.equal(controller.getState().countInRemaining, null);
+  assert.ok(controller.getState().ticks > 0);
 });

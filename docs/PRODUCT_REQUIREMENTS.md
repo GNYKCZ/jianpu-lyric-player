@@ -52,6 +52,8 @@ There must be one musical time source. The metronome, lyric highlighting, cursor
 
 The default audible 4/4 practice pulse uses eighth notes (`1 & 2 & 3 & 4 &`). It uses a familiar compact drum-kit palette: beat 1 is the strongest kick, beat 3 is a secondary kick, beats 2 and 4 are lighter snare hits, and each offbeat is a soft closed-hi-hat-style subdivision cue. Audio scheduling must derive from the master clock rather than introduce another musical timer.
 
+Playback from tick zero has a five-second audible and visual count-in. The musical clock remains at tick zero until the count-in ends, then the first downbeat, cursor, and lyric timeline begin together. Resume and non-zero seek do not repeat the count-in; restarting active playback does.
+
 ## UI goals
 
 The practice player provides play, pause, restart, tempo adjustment, and a path for measure/time seeking. It shows the previous, current, and next measures; the current measure scrolls into view on measure changes. A concise view may show beat and eighth-note landmarks, while a debug view exposes all `1 e & a` subdivisions, ticks, measure, beat, active lyric event, and event identifiers.

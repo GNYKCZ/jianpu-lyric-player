@@ -109,6 +109,35 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   background: #fff;
 }
 
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.25rem;
+  color: #fff8ed;
+  background: rgb(39 25 17 / 58%);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+.countdown-overlay[hidden] { display: none; }
+
+.countdown-overlay small {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+}
+
+.countdown-overlay strong {
+  font-size: clamp(6rem, 24vw, 13rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0.08em 0.2em rgb(0 0 0 / 35%);
+}
+
 .metronome-field small {
   color: #8a928e;
   font-size: 0.68rem;

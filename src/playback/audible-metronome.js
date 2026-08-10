@@ -150,9 +150,33 @@ export class AudibleMetronome {
     }
   }
 
-  scheduleFrom({ ticks, bpm, audioStartTime, firstTicks = ticks }) {
+  scheduleCountIn({ seconds, audioStartTime }) {
     if (!this.enabled || !this.isReady) return [];
+    if (!Number.isInteger(seconds) || seconds <= 0) {
+      throw new RangeError('Count-in seconds must be a positive integer.');
+    }
     this.cancelScheduled();
+    const scheduled = [];
+    for (let index = 0; index < seconds; index += 1) {
+      const count = seconds - index;
+      const accent = count === 1 ? METRONOME_ACCENTS.SECONDARY : METRONOME_ACCENTS.BEAT;
+      const when = audioStartTime + index;
+      const source = this.clickRenderer({
+        context: this.context,
+        destination: this.output,
+        when,
+        accent,
+      });
+      this.scheduledSources.add(source);
+      source.onended = () => this.scheduledSources.delete(source);
+      scheduled.push(Object.freeze({ count, accent, when }));
+    }
+    return scheduled;
+  }
+
+  scheduleFrom({ ticks, bpm, audioStartTime, firstTicks = ticks, replace = true }) {
+    if (!this.enabled || !this.isReady) return [];
+    if (replace) this.cancelScheduled();
     const ticksPerSecond = (this.ppq * bpm) / 60;
     const pulseTicks = metronomePulseTicks(this.ppq, this.timeSignature);
     const firstPulse = firstMetronomePulseAtOrAfter(firstTicks, this.ppq, this.timeSignature);

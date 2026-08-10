@@ -82,6 +82,7 @@ async function startApp() {
   const seekInput = /** @type {HTMLInputElement} */ (element('seek-input'));
   const metronomeEnabled = /** @type {HTMLInputElement} */ (element('metronome-enabled'));
   const metronomeVolume = /** @type {HTMLInputElement} */ (element('metronome-volume'));
+  const countdownOverlay = element('countdown-overlay');
 
   element('song-title').textContent = songDocument.metadata.title;
   bpmInput.value = String(songDocument.metadata.defaultBpm);
@@ -98,8 +99,17 @@ async function startApp() {
   let activeMeasureIndex = -1;
   let activeEventId = null;
   controller.subscribe((state) => {
-    element('play-button').textContent = state.isPlaying ? 'Ⅱ 暂停' : '▶ 播放';
+    const isCountingIn = state.countInRemaining !== null;
+    element('play-button').textContent = state.isPlaying
+      ? (isCountingIn ? '■ 取消倒计时' : 'Ⅱ 暂停')
+      : '▶ 播放';
     element('play-button').classList.toggle('playing', state.isPlaying);
+    countdownOverlay.hidden = !isCountingIn;
+    if (isCountingIn) element('countdown-value').textContent = String(state.countInRemaining);
+    bpmInput.disabled = isCountingIn;
+    seekInput.disabled = isCountingIn;
+    measureSelect.disabled = isCountingIn;
+    metronomeEnabled.disabled = isCountingIn;
     element('section-value').textContent = sectionNames[state.sectionType];
     element('measure-value').textContent = `M${state.measureIndex}`;
     element('beat-value').textContent = `${state.beat} ${state.subdivision}`;

@@ -103,6 +103,38 @@ test('audible metronome schedules a complete 4/4 eighth-note measure on Web Audi
   assert.ok(rendered.every(({ source }) => source.stopped));
 });
 
+test('five-second count-in is scheduled before playback without replacing song hits', async () => {
+  const harness = createAudioHarness();
+  const rendered = [];
+  const metronome = new AudibleMetronome({
+    ppq: 480,
+    timeSignature: { numerator: 4, denominator: 4 },
+    totalTicks: 1920,
+    audioContextFactory: () => harness.context,
+    clickRenderer(event) {
+      rendered.push(event);
+      return { stop() {}, onended: null };
+    },
+  });
+  await metronome.prepare();
+
+  const countIn = metronome.scheduleCountIn({ seconds: 5, audioStartTime: 10.025 });
+  const song = metronome.scheduleFrom({
+    ticks: 0,
+    bpm: 60,
+    audioStartTime: 15.025,
+    replace: false,
+  });
+
+  assert.deepEqual(countIn.map(({ count }) => count), [5, 4, 3, 2, 1]);
+  assert.deepEqual(countIn.map(({ when }) => when), [10.025, 11.025, 12.025, 13.025, 14.025]);
+  assert.deepEqual(countIn.map(({ accent }) => accent), [
+    'beat', 'beat', 'beat', 'beat', 'secondary',
+  ]);
+  assert.equal(song[0].when, 15.025);
+  assert.equal(rendered.length, 13);
+});
+
 test('seek and BPM scheduling derive future pulses from musical ticks', async () => {
   const harness = createAudioHarness();
   const metronome = new AudibleMetronome({

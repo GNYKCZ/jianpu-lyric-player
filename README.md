@@ -34,6 +34,7 @@ npm.cmd run preview
 - JSON-backed `SongDocument` loading and validation.
 - 4/4 timing with sixteenth-note lyric onsets and PPQ/tick canonical time.
 - One `MasterPlaybackClock` for play, pause, restart, BPM changes, and seek.
+- Five-second audible and visual count-in before playback starts at tick zero.
 - Audible 4/4 eighth-note drum-kit pulse with kick accents on beats 1/3, light snare hits on beats 2/4, and soft closed-hi-hat-style offbeats.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.

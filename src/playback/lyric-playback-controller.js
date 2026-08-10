@@ -12,12 +12,15 @@ export class LyricPlaybackController {
   constructor({
     engine,
     metronome = null,
+    countInSeconds = 5,
     now = undefined,
     scheduleFrame = browserScheduleFrame,
     cancelFrame = browserCancelFrame,
   }) {
     this.engine = engine;
     this.metronome = metronome;
+    this.countInSeconds = countInSeconds;
+    this.countInEndsAtMs = null;
     this.clock = new MasterPlaybackClock({
       ppq: engine.document.metadata.ppq,
       bpm: engine.document.metadata.defaultBpm,
@@ -32,10 +35,17 @@ export class LyricPlaybackController {
   }
 
   getState() {
+    const now = this.clock.now();
+    const countInRemaining = this.clock.playing
+      && this.countInEndsAtMs !== null
+      && now < this.countInEndsAtMs
+      ? Math.min(this.countInSeconds, Math.ceil((this.countInEndsAtMs - now) / 1000))
+      : null;
     return Object.freeze({
-      ...this.engine.getStateAtTicks(this.clock.getCurrentTicks()),
+      ...this.engine.getStateAtTicks(this.clock.getCurrentTicks(now)),
       bpm: this.clock.bpm,
       isPlaying: this.clock.playing,
+      countInRemaining,
     });
   }
 
@@ -59,6 +69,9 @@ export class LyricPlaybackController {
 
   onFrame() {
     this.frameHandle = null;
+    if (this.countInEndsAtMs !== null && this.clock.now() >= this.countInEndsAtMs) {
+      this.countInEndsAtMs = null;
+    }
     const state = this.notify();
     if (state.isComplete) {
       this.clock.pause();
@@ -74,12 +87,24 @@ export class LyricPlaybackController {
     const startTicks = this.clock.getCurrentTicks();
     const metronomeReady = await this.metronome?.prepare() ?? false;
     const leadSeconds = metronomeReady ? this.metronome.startLeadSeconds : 0;
-    this.clock.play(this.clock.now() + (leadSeconds * 1000));
+    const shouldCountIn = startTicks === 0 && this.countInSeconds > 0;
+    const countInDuration = shouldCountIn ? this.countInSeconds : 0;
+    const playbackStartsAtMs = this.clock.now() + ((leadSeconds + countInDuration) * 1000);
+    this.countInEndsAtMs = shouldCountIn ? playbackStartsAtMs : null;
+    this.clock.play(playbackStartsAtMs);
     if (metronomeReady) {
+      const audioStartTime = this.metronome.context.currentTime + leadSeconds;
+      if (shouldCountIn) {
+        this.metronome.scheduleCountIn({
+          seconds: this.countInSeconds,
+          audioStartTime,
+        });
+      }
       this.metronome.scheduleFrom({
         ticks: startTicks,
         bpm: this.clock.bpm,
-        audioStartTime: this.metronome.context.currentTime + leadSeconds,
+        audioStartTime: audioStartTime + countInDuration,
+        replace: !shouldCountIn,
       });
     }
     this.notify();
@@ -88,6 +113,7 @@ export class LyricPlaybackController {
 
   pause() {
     this.clock.pause();
+    this.countInEndsAtMs = null;
     this.metronome?.cancelScheduled();
     if (this.frameHandle !== null) {
       this.cancelFrame(this.frameHandle);
@@ -105,12 +131,24 @@ export class LyricPlaybackController {
     const leadSeconds = this.clock.playing && this.metronome?.isReady
       ? this.metronome.startLeadSeconds
       : 0;
-    this.clock.restart(this.clock.now() + (leadSeconds * 1000));
+    const shouldCountIn = this.clock.playing && this.countInSeconds > 0;
+    const countInDuration = shouldCountIn ? this.countInSeconds : 0;
+    const playbackStartsAtMs = this.clock.now() + ((leadSeconds + countInDuration) * 1000);
+    this.countInEndsAtMs = shouldCountIn ? playbackStartsAtMs : null;
+    this.clock.restart(playbackStartsAtMs);
     if (this.clock.playing && this.metronome?.isReady) {
+      const audioStartTime = this.metronome.context.currentTime + leadSeconds;
+      if (shouldCountIn) {
+        this.metronome.scheduleCountIn({
+          seconds: this.countInSeconds,
+          audioStartTime,
+        });
+      }
       this.metronome.scheduleFrom({
         ticks: 0,
         bpm: this.clock.bpm,
-        audioStartTime: this.metronome.context.currentTime + leadSeconds,
+        audioStartTime: audioStartTime + countInDuration,
+        replace: !shouldCountIn,
       });
     }
     this.notify();
@@ -118,12 +156,15 @@ export class LyricPlaybackController {
   }
 
   setBpm(bpm) {
+    if (this.getState().countInRemaining !== null) return false;
     this.clock.setBpm(bpm);
     this.metronome?.syncFuture(this.clock);
     this.notify();
+    return true;
   }
 
   seekTicks(ticks) {
+    this.countInEndsAtMs = null;
     const leadSeconds = this.clock.playing && this.metronome?.isReady
       ? this.metronome.startLeadSeconds
       : 0;

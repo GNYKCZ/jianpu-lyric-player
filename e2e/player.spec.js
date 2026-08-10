@@ -78,6 +78,18 @@ test('measure seek scrolls the selected measure into view', async ({ page }) => 
   })).toBeLessThan(12);
 });
 
+test('starting from the beginning shows a cancellable five-second count-in', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#play-button').click();
+  await expect(page.locator('#countdown-overlay')).toBeVisible();
+  await expect(page.locator('#countdown-value')).toHaveText('5');
+  await expect(page.locator('#tick-value')).toContainText('0 /');
+  await expect(page.locator('#bpm-input')).toBeDisabled();
+  await page.locator('#play-button').click();
+  await expect(page.locator('#countdown-overlay')).toBeHidden();
+  await expect(page.locator('#play-button')).toContainText('播放');
+});
+
 test('development server loads an ignored local fixture by query parameter', async ({ page }) => {
   await page.goto('/?fixture=e2e_local');
   await expect(page.locator('#song-title')).toHaveText('Local Fixture Test');

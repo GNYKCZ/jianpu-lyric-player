@@ -6,7 +6,7 @@
   "description": "A browser-based lyric music timeline player driven by one master clock.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/verify-production-build.mjs",
     "preview": "vite preview",
     "test": "node --test test/*.test.js",
     "lint": "eslint .",

@@ -50,9 +50,15 @@ An active lyric begins at its onset and remains active until the next lyric onse
 
 There must be one musical time source. The metronome, lyric highlighting, cursor, and scrolling derive their state from `currentTicks` on that master clock. UI rendering may use `requestAnimationFrame`, but separate timers must not synchronize these features. Tempo changes alter tick-to-real-time mapping, never the stored musical positions. Pause, resume, restart, and seek must preserve musical position without drift.
 
+The default audible 4/4 practice pulse uses eighth notes (`1 & 2 & 3 & 4 &`). It uses a familiar compact drum-kit palette: beat 1 is the strongest kick, beat 3 is a secondary kick, beats 2 and 4 are lighter snare hits, and each offbeat is a soft closed-hi-hat-style subdivision cue. Audio scheduling must derive from the master clock rather than introduce another musical timer.
+
+Playback from tick zero has a five-second audible and visual count-in. The musical clock remains at tick zero until the count-in ends, then the first downbeat, cursor, and lyric timeline begin together. Resume and non-zero seek do not repeat the count-in; restarting active playback does.
+
 ## UI goals
 
 The practice player provides play, pause, restart, tempo adjustment, and a path for measure/time seeking. It shows the previous, current, and next measures; the current measure scrolls into view on measure changes. A concise view may show beat and eighth-note landmarks, while a debug view exposes all `1 e & a` subdivisions, ticks, measure, beat, active lyric event, and event identifiers.
+
+For beginner guitar-and-vocal coordination, the UI may derive a generic right-hand practice pattern from the same master-clock position. The initial 4/4 pattern has eight eighth-note actions, displayed as `root 3 2 3 | root 3 2 3` and aligned to `1 & 2 & 3 & 4 &`. Root events use a distinct visual treatment. This practice layer must not add an independent timer, change lyric timing, or invent song-specific chords, strings, fingerings, or arrangements.
 
 ## OMR direction
 

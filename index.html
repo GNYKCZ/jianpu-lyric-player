@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="精确到十六分音符的歌词音乐时间轴播放器">
+    <title>简谱歌词时间轴播放器</title>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">MUSIC TIMELINE LAB</p>
+          <h1 id="song-title">正在加载 Demo Song…</h1>
+          <p class="subtitle">统一时钟驱动的逐字歌词节拍练习器</p>
+        </div>
+        <div class="mode-switch" aria-label="显示模式">
+          <button id="compact-mode" class="mode-button" type="button">简洁</button>
+          <button id="debug-mode" class="mode-button active" type="button">精确</button>
+        </div>
+      </header>
+
+      <section class="transport-panel" aria-label="播放控制">
+        <div class="transport-buttons">
+          <button id="restart-button" class="icon-button" type="button" aria-label="重新开始">↺</button>
+          <button id="play-button" class="play-button" type="button">▶ 播放</button>
+        </div>
+
+        <label class="field bpm-field">
+          <span>BPM</span>
+          <input id="bpm-input" type="number" min="30" max="240" step="1" value="72">
+        </label>
+
+        <label class="field measure-field">
+          <span>跳转小节</span>
+          <select id="measure-select"></select>
+        </label>
+
+        <div class="now-playing" aria-live="polite">
+          <span id="section-value">—</span>
+          <strong id="measure-value">M—</strong>
+          <span id="beat-value">—</span>
+        </div>
+      </section>
+
+      <section class="progress-panel" aria-label="播放进度">
+        <input id="seek-input" type="range" min="0" max="1" step="1" value="0" aria-label="歌曲进度">
+        <div class="progress-meta">
+          <span id="lyric-value">等待歌词</span>
+          <span id="tick-value">0 ticks</span>
+        </div>
+      </section>
+
+      <section class="timeline-panel">
+        <div class="timeline-heading">
+          <div>
+            <p class="eyebrow">PERFORMANCE SEQUENCE</p>
+            <h2>歌词时间轴</h2>
+          </div>
+          <p class="timeline-hint">当前小节自动保持在视野中央</p>
+        </div>
+        <div id="measure-list" class="measure-list debug-mode" tabindex="0" aria-label="歌曲小节列表"></div>
+      </section>
+
+      <p id="error-message" class="error-message" hidden></p>
+    </main>
+  </body>
+</html>

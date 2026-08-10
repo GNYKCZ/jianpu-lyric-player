@@ -28,6 +28,18 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('.measure-card').first().locator('.pulse-secondary')).toHaveCount(1);
   await expect(page.locator('.measure-card').first().locator('.pulse-beat')).toHaveCount(2);
   await expect(page.locator('.measure-card').first().locator('.pulse-offbeat')).toHaveCount(4);
+  await expect(page.locator('#guitar-cue')).toBeVisible();
+  await expect(page.locator('#guitar-cue-status')).toHaveText('按播放开始');
+  await expect(page.locator('#guitar-cue-position')).toHaveText('第 1 拍');
+  await expect(page.locator('#guitar-cue-token')).toHaveText('根');
+  await expect(page.locator('#picking-sequence .picking-sequence-cell')).toHaveCount(8);
+  await expect(page.locator('#picking-sequence .pick-root')).toHaveCount(2);
+  await expect(page.locator('#picking-sequence .pick-inner')).toHaveCount(6);
+  await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-root')).toHaveCount(2);
+  await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-inner')).toHaveCount(6);
+  await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-root, .guitar-cell.pick-inner')).toHaveText([
+    '根', '3', '2', '3', '根', '3', '2', '3',
+  ]);
 
   await page.locator('#compact-mode').click();
   await expect(page.locator('#measure-list')).toHaveClass(/compact-mode/);
@@ -76,6 +88,22 @@ test('measure seek scrolls the selected measure into view', async ({ page }) => 
     const listCenter = listRect.top + (listRect.height / 2);
     return Math.abs(cardCenter - listCenter);
   })).toBeLessThan(12);
+});
+
+test('guitar cue follows all eight master-clock eighth-note positions', async ({ page }) => {
+  await page.goto('/');
+  const seek = page.locator('#seek-input');
+  const cue = page.locator('#guitar-cue');
+  const token = page.locator('#guitar-cue-token');
+  const expected = ['根', '3', '2', '3', '根', '3', '2', '3'];
+
+  for (let index = 0; index < expected.length; index += 1) {
+    await seek.fill(String(index * 240));
+    await expect(token).toHaveText(expected[index]);
+    await expect(page.locator('#guitar-cue-position')).toContainText(`第 ${Math.floor(index / 2) + 1} 拍`);
+    if (index === 0 || index === 4) await expect(cue).toHaveClass(/root-cue/);
+    else await expect(cue).not.toHaveClass(/root-cue/);
+  }
 });
 
 test('starting from the beginning shows a cancellable five-second count-in', async ({ page }) => {

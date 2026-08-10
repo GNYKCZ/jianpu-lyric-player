@@ -156,6 +156,54 @@ async function startApp() {
   let upcomingPickCell = null;
   let activeSequenceCell = null;
   let upcomingSequenceCell = null;
+  let practiceLyricMeasureIndex = -1;
+  let activePracticeLyricId = null;
+  let practiceLyricCells = new Map();
+
+  function renderPracticeLyric(state) {
+    const line = element('practice-lyric-line');
+    const timelineMeasure = engine.timeline.measures[state.timelineMeasureIndex];
+    if (practiceLyricMeasureIndex !== state.timelineMeasureIndex) {
+      practiceLyricMeasureIndex = state.timelineMeasureIndex;
+      activePracticeLyricId = null;
+      practiceLyricCells = new Map();
+      line.replaceChildren();
+
+      if (timelineMeasure.lyricEvents.length === 0) {
+        const empty = createCell('practice-lyric-empty', '（本小节无歌词）');
+        line.append(empty);
+      } else {
+        timelineMeasure.lyricEvents.forEach((event) => {
+          const lyricCell = createCell('practice-lyric-char', event.text);
+          lyricCell.dataset.practiceEvent = event.occurrenceId;
+          practiceLyricCells.set(event.occurrenceId, lyricCell);
+          line.append(lyricCell);
+        });
+      }
+    }
+
+    const currentEventId = state.currentLyricEvent?.occurrenceId ?? null;
+    if (activePracticeLyricId !== currentEventId) {
+      if (activePracticeLyricId) {
+        practiceLyricCells.get(activePracticeLyricId)?.classList.remove('active');
+      }
+      activePracticeLyricId = currentEventId;
+      if (activePracticeLyricId) {
+        practiceLyricCells.get(activePracticeLyricId)?.classList.add('active');
+      }
+    }
+
+    if (state.currentLyricEvent?.text) {
+      const prefix = practiceLyricCells.has(state.currentLyricEvent.occurrenceId)
+        ? '现在唱'
+        : '延续上一字';
+      element('lyric-value').textContent = `${prefix}：${state.currentLyricEvent.text}`;
+    } else if (timelineMeasure.lyricEvents[0]) {
+      element('lyric-value').textContent = `准备：${timelineMeasure.lyricEvents[0].text}`;
+    } else {
+      element('lyric-value').textContent = '本小节为空拍';
+    }
+  }
 
   function renderGuitarPractice(state) {
     const practice = getGuitarPracticeState({
@@ -242,12 +290,10 @@ async function startApp() {
     element('section-value').textContent = sectionNames[state.sectionType];
     element('measure-value').textContent = `M${state.measureIndex}`;
     element('beat-value').textContent = `${state.beat} ${state.subdivision}`;
-    element('lyric-value').textContent = state.currentLyricEvent?.text
-      ? `当前歌词：${state.currentLyricEvent.text}`
-      : '等待歌词';
     element('tick-value').textContent = `${Math.round(state.ticks)} / ${state.totalTicks} ticks`;
     seekInput.value = String(Math.round(state.ticks));
     measureSelect.value = String(state.timelineMeasureIndex);
+    renderPracticeLyric(state);
     renderGuitarPractice(state);
 
     if (activeEventId !== state.currentLyricEvent?.occurrenceId) {

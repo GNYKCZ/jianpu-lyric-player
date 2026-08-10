@@ -23,6 +23,10 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('.measure-card')).toHaveCount(11);
   await expect(page.locator('.measure-card.current')).toContainText('主歌');
   await expect(page.locator('.lyric-event.active')).toHaveText('今');
+  await expect(page.locator('#practice-lyric-line')).toBeVisible();
+  await expect(page.locator('#practice-lyric-line')).toHaveText('今天风轻');
+  await expect(page.locator('#practice-lyric-line .active')).toHaveText('今');
+  await expect(page.locator('#lyric-value')).toHaveText('现在唱：今');
   await expect(page.locator('#metronome-enabled')).toBeChecked();
   await expect(page.locator('.measure-card').first().locator('.pulse-primary')).toHaveCount(1);
   await expect(page.locator('.measure-card').first().locator('.pulse-secondary')).toHaveCount(1);
@@ -51,6 +55,8 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('#measure-value')).toHaveText('M1');
   await expect(page.locator('.measure-card.current')).toContainText('#3');
   await expect(page.locator('.lyric-event.active')).toHaveText('向');
+  await expect(page.locator('#practice-lyric-line')).toHaveText('向前走吧');
+  await expect(page.locator('#practice-lyric-line .active')).toHaveText('向');
 
   await page.locator('#bpm-input').fill('120');
   await page.locator('#bpm-input').blur();

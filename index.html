@@ -57,9 +57,17 @@
       </section>
 
       <section class="progress-panel" aria-label="播放进度">
+        <div class="lyric-stage">
+          <div>
+            <p class="eyebrow">SINGING CUE</p>
+            <span class="lyric-stage-label">本小节歌词</span>
+          </div>
+          <strong id="lyric-value" aria-live="polite">准备进入歌词</strong>
+          <div id="practice-lyric-line" class="practice-lyric-line" aria-live="polite"></div>
+        </div>
         <input id="seek-input" type="range" min="0" max="1" step="1" value="0" aria-label="歌曲进度">
         <div class="progress-meta">
-          <span id="lyric-value">等待歌词</span>
+          <span>橙色字是现在唱，空拍仍保持上一字</span>
           <span id="tick-value">0 ticks</span>
         </div>
       </section>

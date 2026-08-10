@@ -166,10 +166,73 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 .now-playing span { color: #65716c; font-size: 0.78rem; }
 .now-playing strong { font-size: 1.6rem; }
 
-.progress-panel { margin-top: 8px; padding: 18px 28px; border-radius: 8px; }
+.progress-panel { margin-top: 8px; padding: 20px 28px 18px; border-radius: 8px; }
+
+.lyric-stage {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  gap: 4px 24px;
+  margin-bottom: 17px;
+  padding: 0 2px 16px;
+  border-bottom: 1px solid rgba(182, 107, 43, 0.18);
+}
+
+.lyric-stage .eyebrow { margin-bottom: 2px; }
+
+.lyric-stage-label {
+  color: #52635d;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+#lyric-value {
+  justify-self: end;
+  color: #b85d22;
+  font-size: 1rem;
+}
+
+.practice-lyric-line {
+  grid-column: 1 / -1;
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 8px;
+  color: #2d3d38;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 820;
+  letter-spacing: 0.08em;
+}
+
+.practice-lyric-char {
+  display: inline-grid;
+  min-width: 1.18em;
+  min-height: 1.5em;
+  place-items: center;
+  padding: 0.08em 0.13em;
+  border-radius: 0.3em;
+  transition: color 100ms ease, background 100ms ease, transform 100ms ease, box-shadow 100ms ease;
+}
+
+.practice-lyric-char.active {
+  color: #fff;
+  background: #df6c20;
+  box-shadow: 0 7px 18px rgb(223 108 32 / 28%);
+  transform: translateY(-2px) scale(1.13);
+}
+
+.practice-lyric-empty {
+  color: #88938f;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
 #seek-input { width: 100%; accent-color: #b66b2b; }
 .progress-meta { display: flex; justify-content: space-between; margin-top: 8px; color: #65716c; font-size: 0.8rem; }
-#lyric-value { color: #b66b2b; font-weight: 800; }
 
 .guitar-practice-panel {
   margin-top: 8px;
@@ -493,6 +556,11 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   .transport-buttons { grid-column: 1 / -1; }
   .metronome-field { grid-column: 1 / -1; }
   .now-playing { justify-items: start; }
+  .progress-panel { padding-inline: 18px; }
+  .lyric-stage { grid-template-columns: 1fr; align-items: start; gap: 8px; }
+  #lyric-value { justify-self: start; }
+  .practice-lyric-line { gap: 2px; font-size: clamp(1.3rem, 7vw, 1.7rem); }
+  .progress-meta span:first-child { max-width: 65%; }
   .timeline-panel { padding: 18px 10px; }
   .guitar-practice-panel { padding: 22px 18px; }
   .practice-heading { align-items: stretch; flex-direction: column; gap: 16px; }

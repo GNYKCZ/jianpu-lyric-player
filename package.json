@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Music timeline domain model and validation primitives.",
+  "description": "A browser-based lyric music timeline player driven by one master clock.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -15,10 +15,10 @@
     "check": "npm run lint && npm run typecheck && npm test && npm run build"
   },
   "devDependencies": {
-    "@playwright/test": "latest",
-    "@types/node": "^26.2.0",
-    "eslint": "latest",
-    "typescript": "latest",
-    "vite": "latest"
+    "@playwright/test": "1.62.1",
+    "@types/node": "26.2.0",
+    "eslint": "10.8.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
   }
 }

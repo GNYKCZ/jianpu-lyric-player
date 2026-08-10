@@ -4,6 +4,8 @@ A browser-based music timeline player that maps lyric characters to precise musi
 
 The repository uses fictional public demo data only. Commercial scores, complete commercial lyrics, audio, and manually verified private fixtures are excluded from version control.
 
+中文安装、操作和本地私有 fixture 加载方法见 [中文使用说明](docs/使用说明.md)。
+
 ## Run locally
 
 Requirements: Node.js 20 or newer and npm.

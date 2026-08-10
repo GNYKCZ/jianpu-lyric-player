@@ -78,7 +78,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 
 .transport-panel {
   display: grid;
-  grid-template-columns: auto minmax(100px, 0.55fr) minmax(180px, 1fr) auto;
+  grid-template-columns: auto minmax(90px, 0.4fr) minmax(230px, 1fr) minmax(180px, 0.8fr) auto;
   gap: 20px;
   align-items: end;
   margin-top: 8px;
@@ -96,6 +96,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 .icon-button { width: 44px; color: #285e51; background: #e1ece7; font-size: 1.4rem; }
 .play-button { min-width: 116px; padding: 0 20px; color: white; background: #285e51; }
 .play-button.playing { background: #b66b2b; }
+.play-button:disabled { cursor: wait; opacity: 0.72; }
 
 .field { display: grid; gap: 7px; color: #65716c; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.04em; }
 .field input, .field select {
@@ -107,6 +108,29 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   color: #17221f;
   background: #fff;
 }
+
+.metronome-field small {
+  color: #8a928e;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.metronome-controls {
+  display: grid;
+  grid-template-columns: auto minmax(80px, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid #d6d7d0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.sound-toggle { display: flex; align-items: center; gap: 6px; color: #285e51; }
+.sound-toggle input { width: 17px; min-height: auto; accent-color: #285e51; }
+#metronome-volume { min-height: auto; padding: 0; accent-color: #b66b2b; }
 
 .now-playing { display: grid; justify-items: end; gap: 2px; min-width: 108px; }
 .now-playing span { color: #65716c; font-size: 0.78rem; }
@@ -158,6 +182,11 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 .step-row { display: grid; grid-template-columns: repeat(16, minmax(22px, 1fr)); }
 .step-cell { min-width: 0; text-align: center; }
 .label-row { color: #75807c; font-family: "Cascadia Mono", Consolas, monospace; font-size: 0.7rem; }
+.metronome-pulse { font-weight: 750; }
+.pulse-primary { color: #b95322; font-weight: 950; }
+.pulse-secondary { color: #b66b2b; font-weight: 850; }
+.pulse-beat { color: #425e55; }
+.pulse-offbeat { color: #7f8a85; }
 .lyric-row { margin-top: 11px; font-size: clamp(1rem, 2.2vw, 1.35rem); font-weight: 730; }
 .lyric-cell { min-height: 30px; color: #b8bcb9; }
 .lyric-event { color: #34443f; transition: color 100ms ease, transform 100ms ease; }
@@ -178,6 +207,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   .hero { align-items: start; padding: 24px 20px; }
   .transport-panel { grid-template-columns: 1fr 1fr; padding: 20px; }
   .transport-buttons { grid-column: 1 / -1; }
+  .metronome-field { grid-column: 1 / -1; }
   .now-playing { justify-items: start; }
   .timeline-panel { padding: 18px 10px; }
   .timeline-heading { padding: 0 8px; }

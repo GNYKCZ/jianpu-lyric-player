@@ -1,5 +1,6 @@
 import './style.css';
 import { TimelineEngine } from './engine/timeline-engine.js';
+import { AudibleMetronome } from './playback/audible-metronome.js';
 import { LyricPlaybackController } from './playback/lyric-playback-controller.js';
 import { loadSelectedSong } from '#song-loader';
 import { step16ToBeatSubdivision, tickToStep16 } from './song/timing.js';
@@ -40,6 +41,11 @@ function createMeasureCard(measure, ppq) {
     const position = step16ToBeatSubdivision(step16);
     const label = position.subdivision === '1' ? String(position.beat) : position.subdivision;
     const labelCell = createCell(`step-cell sub-label sub-${position.subdivisionIndex}`, label);
+    if (step16 % 2 === 0) labelCell.classList.add('metronome-pulse');
+    if (step16 === 0) labelCell.classList.add('pulse-primary');
+    else if (step16 === 8) labelCell.classList.add('pulse-secondary');
+    else if (step16 % 4 === 0) labelCell.classList.add('pulse-beat');
+    else if (step16 % 2 === 0) labelCell.classList.add('pulse-offbeat');
     if (step16 > 0 && step16 % 4 === 0) labelCell.classList.add('beat-start');
     labelRow.append(labelCell);
 
@@ -64,11 +70,18 @@ function createMeasureCard(measure, ppq) {
 async function startApp() {
   const songDocument = await loadSelectedSong();
   const engine = new TimelineEngine(songDocument);
-  const controller = new LyricPlaybackController({ engine });
+  const metronome = new AudibleMetronome({
+    ppq: songDocument.metadata.ppq,
+    timeSignature: songDocument.metadata.timeSignature,
+    totalTicks: engine.timeline.totalTicks,
+  });
+  const controller = new LyricPlaybackController({ engine, metronome });
   const measureList = element('measure-list');
   const measureSelect = /** @type {HTMLSelectElement} */ (element('measure-select'));
   const bpmInput = /** @type {HTMLInputElement} */ (element('bpm-input'));
   const seekInput = /** @type {HTMLInputElement} */ (element('seek-input'));
+  const metronomeEnabled = /** @type {HTMLInputElement} */ (element('metronome-enabled'));
+  const metronomeVolume = /** @type {HTMLInputElement} */ (element('metronome-volume'));
 
   element('song-title').textContent = songDocument.metadata.title;
   bpmInput.value = String(songDocument.metadata.defaultBpm);
@@ -127,7 +140,22 @@ async function startApp() {
     }
   });
 
-  element('play-button').addEventListener('click', () => controller.togglePlayback());
+  element('play-button').addEventListener('click', async () => {
+    const playButton = /** @type {HTMLButtonElement} */ (element('play-button'));
+    playButton.disabled = true;
+    try {
+      await controller.togglePlayback();
+    } finally {
+      playButton.disabled = false;
+    }
+    if (metronome.enabled && controller.clock.playing && !metronome.isReady) {
+      metronomeEnabled.checked = false;
+      await controller.setMetronomeEnabled(false);
+      const message = element('error-message');
+      message.hidden = false;
+      message.textContent = '当前浏览器不支持 Web Audio，已继续进行无声播放。';
+    }
+  });
   element('restart-button').addEventListener('click', () => controller.restart());
   bpmInput.addEventListener('change', () => {
     const bpm = Number(bpmInput.value);
@@ -136,6 +164,18 @@ async function startApp() {
   });
   seekInput.addEventListener('input', () => controller.seekTicks(Number(seekInput.value)));
   measureSelect.addEventListener('change', () => controller.seekMeasure(Number(measureSelect.value)));
+  metronomeEnabled.addEventListener('change', async () => {
+    const ready = await controller.setMetronomeEnabled(metronomeEnabled.checked);
+    if (metronomeEnabled.checked && !ready) {
+      metronomeEnabled.checked = false;
+      const message = element('error-message');
+      message.hidden = false;
+      message.textContent = '当前浏览器不支持 Web Audio，无法开启节拍声。';
+    }
+  });
+  metronomeVolume.addEventListener('input', () => {
+    controller.setMetronomeVolume(Number(metronomeVolume.value) / 100);
+  });
 
   element('debug-mode').addEventListener('click', () => {
     measureList.classList.replace('compact-mode', 'debug-mode');

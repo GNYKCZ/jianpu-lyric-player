@@ -9,8 +9,15 @@ function browserCancelFrame(handle) {
 }
 
 export class LyricPlaybackController {
-  constructor({ engine, now = undefined, scheduleFrame = browserScheduleFrame, cancelFrame = browserCancelFrame }) {
+  constructor({
+    engine,
+    metronome = null,
+    now = undefined,
+    scheduleFrame = browserScheduleFrame,
+    cancelFrame = browserCancelFrame,
+  }) {
     this.engine = engine;
+    this.metronome = metronome;
     this.clock = new MasterPlaybackClock({
       ppq: engine.document.metadata.ppq,
       bpm: engine.document.metadata.defaultBpm,
@@ -55,20 +62,33 @@ export class LyricPlaybackController {
     const state = this.notify();
     if (state.isComplete) {
       this.clock.pause();
+      this.metronome?.cancelScheduled();
       this.notify();
       return;
     }
     this.requestFrame();
   }
 
-  play() {
-    this.clock.play();
+  async play() {
+    if (this.clock.playing) return;
+    const startTicks = this.clock.getCurrentTicks();
+    const metronomeReady = await this.metronome?.prepare() ?? false;
+    const leadSeconds = metronomeReady ? this.metronome.startLeadSeconds : 0;
+    this.clock.play(this.clock.now() + (leadSeconds * 1000));
+    if (metronomeReady) {
+      this.metronome.scheduleFrom({
+        ticks: startTicks,
+        bpm: this.clock.bpm,
+        audioStartTime: this.metronome.context.currentTime + leadSeconds,
+      });
+    }
     this.notify();
     this.requestFrame();
   }
 
   pause() {
     this.clock.pause();
+    this.metronome?.cancelScheduled();
     if (this.frameHandle !== null) {
       this.cancelFrame(this.frameHandle);
       this.frameHandle = null;
@@ -76,26 +96,55 @@ export class LyricPlaybackController {
     this.notify();
   }
 
-  togglePlayback() {
+  async togglePlayback() {
     if (this.clock.playing) this.pause();
-    else this.play();
+    else await this.play();
   }
 
   restart() {
-    this.clock.restart();
+    const leadSeconds = this.clock.playing && this.metronome?.isReady
+      ? this.metronome.startLeadSeconds
+      : 0;
+    this.clock.restart(this.clock.now() + (leadSeconds * 1000));
+    if (this.clock.playing && this.metronome?.isReady) {
+      this.metronome.scheduleFrom({
+        ticks: 0,
+        bpm: this.clock.bpm,
+        audioStartTime: this.metronome.context.currentTime + leadSeconds,
+      });
+    }
     this.notify();
     this.requestFrame();
   }
 
   setBpm(bpm) {
     this.clock.setBpm(bpm);
+    this.metronome?.syncFuture(this.clock);
     this.notify();
   }
 
   seekTicks(ticks) {
-    this.clock.seek(ticks);
+    const leadSeconds = this.clock.playing && this.metronome?.isReady
+      ? this.metronome.startLeadSeconds
+      : 0;
+    this.clock.seek(ticks, this.clock.now() + (leadSeconds * 1000));
+    if (this.clock.playing && this.metronome?.isReady) {
+      this.metronome.scheduleFrom({
+        ticks: this.clock.anchorTicks,
+        bpm: this.clock.bpm,
+        audioStartTime: this.metronome.context.currentTime + leadSeconds,
+      });
+    }
     this.notify();
     this.requestFrame();
+  }
+
+  async setMetronomeEnabled(enabled) {
+    return this.metronome?.setEnabled(enabled, this.clock) ?? false;
+  }
+
+  setMetronomeVolume(volume) {
+    this.metronome?.setVolume(volume);
   }
 
   seekMeasure(timelineMeasureIndex) {
@@ -110,5 +159,6 @@ export class LyricPlaybackController {
     if (this.frameHandle !== null) this.cancelFrame(this.frameHandle);
     this.frameHandle = null;
     this.listeners.clear();
+    void this.metronome?.dispose();
   }
 }

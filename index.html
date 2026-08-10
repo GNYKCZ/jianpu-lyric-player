@@ -32,6 +32,18 @@
           <input id="bpm-input" type="number" min="30" max="240" step="1" value="72">
         </label>
 
+        <div class="field metronome-field">
+          <span>节拍声 · 1 & 2 & 3 & 4 &</span>
+          <div class="metronome-controls">
+            <label class="sound-toggle">
+              <input id="metronome-enabled" type="checkbox" checked>
+              <span>开启</span>
+            </label>
+            <input id="metronome-volume" type="range" min="0" max="100" step="1" value="65" aria-label="节拍声音量">
+          </div>
+          <small>强 · 轻｜普通 · 轻｜次强 · 轻｜普通 · 轻</small>
+        </div>
+
         <label class="field measure-field">
           <span>跳转小节</span>
           <select id="measure-select"></select>

@@ -5,11 +5,19 @@ import {
   METRONOME_ACCENTS,
 } from './metronome-pattern.js';
 
-const CLICK_PROFILES = Object.freeze({
-  [METRONOME_ACCENTS.PRIMARY]: Object.freeze({ frequency: 1760, level: 1, duration: 0.055 }),
-  [METRONOME_ACCENTS.SECONDARY]: Object.freeze({ frequency: 1397, level: 0.78, duration: 0.05 }),
-  [METRONOME_ACCENTS.BEAT]: Object.freeze({ frequency: 1047, level: 0.62, duration: 0.045 }),
-  [METRONOME_ACCENTS.OFFBEAT]: Object.freeze({ frequency: 784, level: 0.38, duration: 0.04 }),
+const DRUM_PROFILES = Object.freeze({
+  [METRONOME_ACCENTS.PRIMARY]: Object.freeze({
+    kind: 'drum', frequency: 92, pitchDrop: 72, level: 1, duration: 0.15, decay: 25,
+  }),
+  [METRONOME_ACCENTS.SECONDARY]: Object.freeze({
+    kind: 'drum', frequency: 142, pitchDrop: 46, level: 0.62, duration: 0.115, decay: 34,
+  }),
+  [METRONOME_ACCENTS.BEAT]: Object.freeze({
+    kind: 'drum', frequency: 210, pitchDrop: 30, level: 0.38, duration: 0.085, decay: 43,
+  }),
+  [METRONOME_ACCENTS.OFFBEAT]: Object.freeze({
+    kind: 'hat', frequency: 5100, pitchDrop: 0, level: 0.14, duration: 0.04, decay: 105,
+  }),
 });
 
 const bufferCache = new WeakMap();
@@ -19,18 +27,37 @@ function defaultAudioContextFactory() {
   return new globalThis.AudioContext({ latencyHint: 'interactive' });
 }
 
-export function renderWoodblockSamples(sampleRate, accent) {
-  const profile = CLICK_PROFILES[accent];
+function deterministicNoise(index) {
+  const value = Math.sin((index + 1) * 12.9898) * 43758.5453;
+  return ((value - Math.floor(value)) * 2) - 1;
+}
+
+export function renderDrumSamples(sampleRate, accent) {
+  const profile = DRUM_PROFILES[accent];
   if (!profile) throw new RangeError(`Unknown metronome accent: ${accent}`);
   const samples = new Float32Array(Math.ceil(sampleRate * profile.duration));
+  let phase = 0;
 
   for (let index = 0; index < samples.length; index += 1) {
     const time = index / sampleRate;
-    const attack = Math.min(1, time / 0.0012);
-    const envelope = attack * Math.exp(-time * 58);
-    const fundamental = Math.sin(2 * Math.PI * profile.frequency * time);
-    const overtone = Math.sin(2 * Math.PI * profile.frequency * 2.71 * time);
-    samples[index] = profile.level * envelope * ((fundamental * 0.72) + (overtone * 0.28));
+    const attack = Math.min(1, time / 0.001);
+    const envelope = attack * Math.exp(-time * profile.decay);
+    const noise = deterministicNoise(index);
+
+    if (profile.kind === 'hat') {
+      const metallic = Math.sin(2 * Math.PI * profile.frequency * time)
+        * Math.sin(2 * Math.PI * profile.frequency * 1.417 * time);
+      samples[index] = profile.level * envelope * ((noise * 0.72) + (metallic * 0.28));
+      continue;
+    }
+
+    const frequency = profile.frequency + (profile.pitchDrop * Math.exp(-time * 38));
+    phase += (2 * Math.PI * frequency) / sampleRate;
+    const body = Math.sin(phase);
+    const skin = Math.sin(phase * 1.83);
+    const transient = noise * Math.exp(-time * 120);
+    samples[index] = profile.level * envelope
+      * ((body * 0.78) + (skin * 0.15) + (transient * 0.07));
   }
   return samples;
 }
@@ -43,7 +70,7 @@ function getClickBuffer(context, accent) {
   }
   if (contextBuffers.has(accent)) return contextBuffers.get(accent);
 
-  const samples = renderWoodblockSamples(context.sampleRate, accent);
+  const samples = renderDrumSamples(context.sampleRate, accent);
   const buffer = context.createBuffer(1, samples.length, context.sampleRate);
   buffer.copyToChannel(samples, 0);
   contextBuffers.set(accent, buffer);
@@ -197,4 +224,4 @@ export class AudibleMetronome {
   }
 }
 
-export { CLICK_PROFILES };
+export { DRUM_PROFILES };

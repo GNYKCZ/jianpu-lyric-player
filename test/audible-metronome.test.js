@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   AudibleMetronome,
-  renderWoodblockSamples,
+  renderDrumSamples,
 } from '../src/playback/audible-metronome.js';
 import { METRONOME_ACCENTS } from '../src/playback/metronome-pattern.js';
 
@@ -33,18 +33,33 @@ function createAudioHarness() {
   return { context, gainChanges };
 }
 
-test('synthesized click profiles are audible and preserve the intended strength hierarchy', () => {
-  const peaks = [
+function rms(samples) {
+  const sum = samples.reduce((total, sample) => total + (sample * sample), 0);
+  return Math.sqrt(sum / samples.length);
+}
+
+function zeroCrossings(samples) {
+  let crossings = 0;
+  for (let index = 1; index < samples.length; index += 1) {
+    if ((samples[index - 1] < 0) !== (samples[index] < 0)) crossings += 1;
+  }
+  return crossings / samples.length;
+}
+
+test('synthesized drum profiles are audible with a pronounced strength hierarchy', () => {
+  const rendered = [
     METRONOME_ACCENTS.PRIMARY,
     METRONOME_ACCENTS.SECONDARY,
     METRONOME_ACCENTS.BEAT,
     METRONOME_ACCENTS.OFFBEAT,
-  ].map((accent) => peak(renderWoodblockSamples(48_000, accent)));
+  ].map((accent) => renderDrumSamples(48_000, accent));
+  const energy = rendered.map(rms);
 
-  assert.ok(peaks[0] > peaks[1]);
-  assert.ok(peaks[1] > peaks[2]);
-  assert.ok(peaks[2] > peaks[3]);
-  assert.ok(peaks[3] > 0.1);
+  assert.ok(energy[0] > energy[1] * 1.4);
+  assert.ok(energy[1] > energy[2] * 1.25);
+  assert.ok(energy[2] > energy[3] * 1.5);
+  assert.ok(peak(rendered[3]) > 0.05);
+  assert.ok(zeroCrossings(rendered[3]) > zeroCrossings(rendered[0]) * 4);
 });
 
 test('audible metronome schedules a complete 4/4 eighth-note measure on Web Audio time', async () => {

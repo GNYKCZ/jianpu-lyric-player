@@ -58,6 +58,8 @@ Playback from tick zero has a five-second audible and visual count-in. The music
 
 The practice player provides play, pause, restart, tempo adjustment, and a path for measure/time seeking. It shows the previous, current, and next measures; the current measure scrolls into view on measure changes. A concise view may show beat and eighth-note landmarks, while a debug view exposes all `1 e & a` subdivisions, ticks, measure, beat, active lyric event, and event identifiers.
 
+For beginner guitar-and-vocal coordination, the UI may derive a generic right-hand practice pattern from the same master-clock position. The initial 4/4 pattern has eight eighth-note actions, displayed as `root 3 2 3 | root 3 2 3` and aligned to `1 & 2 & 3 & 4 &`. Root events use a distinct visual treatment. This practice layer must not add an independent timer, change lyric timing, or invent song-specific chords, strings, fingerings, or arrangements.
+
 ## OMR direction
 
 Future score ingestion is a separate service with image preprocessing, layout analysis, numbered-notation rhythm parsing, lyric OCR with bounding boxes and confidence, alignment, and rhythm validation. Invalid measures must be reported for correction rather than silently accepted. The interface boundary is conceptually:

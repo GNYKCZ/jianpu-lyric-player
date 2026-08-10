@@ -36,6 +36,7 @@ npm.cmd run preview
 - One `MasterPlaybackClock` for play, pause, restart, BPM changes, and seek.
 - Five-second audible and visual count-in before playback starts at tick zero.
 - Audible 4/4 eighth-note drum-kit pulse with kick accents on beats 1/3, light snare hits on beats 2/4, and soft closed-hi-hat-style offbeats.
+- Beginner guitar coordination cues at all eight eighth-note positions in each 4/4 measure, displayed as `root 3 2 3 | root 3 2 3`, with root notes visually distinguished.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.
 - Previous/current/next measure context with automatic container scrolling.
@@ -62,6 +63,8 @@ Browser UI
 The audible metronome synthesizes a compact kick, snare, and closed-hi-hat-style kit with Web Audio. Beat 1 uses the strongest kick and beat 3 a lighter kick; beats 2/4 use a short snare. A short beater transient and gentle saturation keep the kit punchy on ordinary computer speakers without adding a long bass tail. It schedules each hit from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
 
 Its eighth-note pulse follows Groove Scribe's practice-metronome behavior, while the 4/4 strength hierarchy follows conventional quadruple meter: beat 1 is strongest, beat 3 has a secondary accent, beats 2/4 are lighter, and offbeats are soft. The implementation is original Web Audio synthesis; no Groove Scribe code, soundfont, or sample is copied.
+
+The guitar-practice layer derives the same current measure ticks into eight visual right-hand cues: `root 3 2 3 | root 3 2 3`, aligned to `1 & 2 & 3 & 4 &`. It owns no timer and stores no lyric timing in the DOM. “Root” is deliberately generic: the player marks when to play a chord root, but it does not invent the chord, root string, fingering, or copyrighted arrangement for a private song.
 
 Future image processing stays outside the playback path:
 

@@ -41,12 +41,13 @@ test('measure seek scrolls the selected measure into view', async ({ page }) => 
   await page.locator('#measure-select').selectOption('10');
   await expect(page.locator('.measure-card.current')).toContainText('尾句');
 
-  const isVisibleInScroller = await page.locator('.measure-card.current').evaluate((card) => {
+  await expect.poll(async () => page.locator('.measure-card.current').evaluate((card) => {
     const list = card.parentElement;
-    if (!list) return false;
+    if (!list) return Number.POSITIVE_INFINITY;
     const cardRect = card.getBoundingClientRect();
     const listRect = list.getBoundingClientRect();
-    return cardRect.top >= listRect.top && cardRect.bottom <= listRect.bottom;
-  });
-  expect(isVisibleInScroller).toBe(true);
+    const cardCenter = cardRect.top + (cardRect.height / 2);
+    const listCenter = listRect.top + (listRect.height / 2);
+    return Math.abs(cardCenter - listCenter);
+  })).toBeLessThan(12);
 });

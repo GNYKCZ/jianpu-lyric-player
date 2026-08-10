@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "metadata": {
+    "title": "向光而行（虚构示例）",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "ppq": 480,
+    "defaultBpm": 72
+  },
+  "sections": [
+    {
+      "id": "verse-a",
+      "type": "VERSE",
+      "measures": [
+        {
+          "index": 1,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "va-1-1", "text": "今", "step16": 0, "onsetTicks": 0 },
+            { "id": "va-1-2", "text": "天", "step16": 4, "onsetTicks": 480 },
+            { "id": "va-1-3", "text": "风", "step16": 8, "onsetTicks": 960 },
+            { "id": "va-1-4", "text": "轻", "step16": 12, "onsetTicks": 1440 }
+          ]
+        },
+        {
+          "index": 2,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "va-2-1", "text": "穿", "step16": 0, "onsetTicks": 0 },
+            { "id": "va-2-2", "text": "过", "step16": 5, "onsetTicks": 600 },
+            { "id": "va-2-3", "text": "叶", "step16": 10, "onsetTicks": 1200 },
+            { "id": "va-2-4", "text": "间", "step16": 14, "onsetTicks": 1680 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chorus",
+      "type": "CHORUS",
+      "measures": [
+        {
+          "index": 1,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "c-1-1", "text": "向", "step16": 0, "onsetTicks": 0 },
+            { "id": "c-1-2", "text": "前", "step16": 4, "onsetTicks": 480 },
+            { "id": "c-1-3", "text": "走", "step16": 8, "onsetTicks": 960 },
+            { "id": "c-1-4", "text": "吧", "step16": 12, "onsetTicks": 1440 }
+          ]
+        },
+        {
+          "index": 2,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "c-2-1", "text": "星", "step16": 2, "onsetTicks": 240 },
+            { "id": "c-2-2", "text": "光", "step16": 6, "onsetTicks": 720 },
+            { "id": "c-2-3", "text": "正", "step16": 10, "onsetTicks": 1200 },
+            { "id": "c-2-4", "text": "亮", "step16": 14, "onsetTicks": 1680 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verse-b",
+      "type": "VERSE",
+      "measures": [
+        {
+          "index": 1,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "vb-1-1", "text": "小", "step16": 0, "onsetTicks": 0 },
+            { "id": "vb-1-2", "text": "路", "step16": 4, "onsetTicks": 480 },
+            { "id": "vb-1-3", "text": "延", "step16": 8, "onsetTicks": 960 },
+            { "id": "vb-1-4", "text": "伸", "step16": 12, "onsetTicks": 1440 }
+          ]
+        },
+        {
+          "index": 2,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "vb-2-1", "text": "心", "step16": 0, "onsetTicks": 0 },
+            { "id": "vb-2-2", "text": "中", "step16": 4, "onsetTicks": 480 },
+            { "id": "vb-2-3", "text": "有", "step16": 8, "onsetTicks": 960 },
+            { "id": "vb-2-4", "text": "歌", "step16": 12, "onsetTicks": 1440 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outro",
+      "type": "OUTRO",
+      "measures": [
+        {
+          "index": 1,
+          "lengthTicks": 1920,
+          "lyricEvents": [
+            { "id": "o-1-1", "text": "明", "step16": 0, "onsetTicks": 0 },
+            { "id": "o-1-2", "text": "日", "step16": 4, "onsetTicks": 480 },
+            { "id": "o-1-3", "text": "再", "step16": 8, "onsetTicks": 960 },
+            { "id": "o-1-4", "text": "见", "step16": 12, "onsetTicks": 1440 }
+          ]
+        }
+      ]
+    }
+  ],
+  "performanceSequence": [
+    { "sectionId": "verse-a" },
+    { "sectionId": "chorus" },
+    { "sectionId": "verse-b" },
+    { "sectionId": "chorus" },
+    { "sectionId": "chorus" },
+    { "sectionId": "outro" }
+  ]
+}

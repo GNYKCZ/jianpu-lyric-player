@@ -1,0 +1,24 @@
+{
+  "name": "jianpu-lyric-player",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A browser-based lyric music timeline player driven by one master clock.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test test/*.test.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@types/node": "26.2.0",
+    "eslint": "10.8.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
+  }
+}

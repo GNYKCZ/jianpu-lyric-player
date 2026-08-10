@@ -1,0 +1,9 @@
+{
+  "name": "jianpu-lyric-player",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Music timeline domain model and validation primitives.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

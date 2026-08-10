@@ -4,7 +4,17 @@ A reusable music-timeline player for mapping lyrics to precise musical positions
 
 ## Status
 
-Repository initialization only. No playback, timeline, OCR, OMR, or product implementation is included yet.
+Phase 1 data-layer primitives are available: a validated `SongDocument`, a performance-sequence-derived `LyricTimeline`, and deterministic 16-step/tick conversion. Playback, UI, scrolling, OCR, and OMR remain intentionally unimplemented.
+
+## Development
+
+Run the unit tests with:
+
+```text
+npm test
+```
+
+On PowerShell systems that block `npm.ps1`, use `npm.cmd test` without changing the execution policy.
 
 ## Design direction
 

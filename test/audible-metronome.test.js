@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   AudibleMetronome,
+  DRUM_PROFILES,
   renderDrumSamples,
 } from '../src/playback/audible-metronome.js';
 import { METRONOME_ACCENTS } from '../src/playback/metronome-pattern.js';
@@ -47,6 +48,13 @@ function zeroCrossings(samples) {
 }
 
 test('synthesized drum profiles are audible with a pronounced strength hierarchy', () => {
+  assert.deepEqual([
+    DRUM_PROFILES.primary.kind,
+    DRUM_PROFILES.beat.kind,
+    DRUM_PROFILES.secondary.kind,
+    DRUM_PROFILES.offbeat.kind,
+  ], ['kick', 'snare', 'kick', 'hat']);
+
   const rendered = [
     METRONOME_ACCENTS.PRIMARY,
     METRONOME_ACCENTS.SECONDARY,

@@ -50,7 +50,7 @@ An active lyric begins at its onset and remains active until the next lyric onse
 
 There must be one musical time source. The metronome, lyric highlighting, cursor, and scrolling derive their state from `currentTicks` on that master clock. UI rendering may use `requestAnimationFrame`, but separate timers must not synchronize these features. Tempo changes alter tick-to-real-time mapping, never the stored musical positions. Pause, resume, restart, and seek must preserve musical position without drift.
 
-The default audible 4/4 practice pulse uses eighth notes (`1 & 2 & 3 & 4 &`). Beat 1 is a heavy drum-style primary accent, beat 3 is a medium secondary drum accent, beats 2 and 4 are lighter drum hits, and each offbeat is a soft closed-hi-hat-style subdivision cue. Audio scheduling must derive from the master clock rather than introduce another musical timer.
+The default audible 4/4 practice pulse uses eighth notes (`1 & 2 & 3 & 4 &`). It uses a familiar compact drum-kit palette: beat 1 is the strongest kick, beat 3 is a secondary kick, beats 2 and 4 are lighter snare hits, and each offbeat is a soft closed-hi-hat-style subdivision cue. Audio scheduling must derive from the master clock rather than introduce another musical timer.
 
 ## UI goals
 

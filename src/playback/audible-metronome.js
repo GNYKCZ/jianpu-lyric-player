@@ -7,16 +7,16 @@ import {
 
 const DRUM_PROFILES = Object.freeze({
   [METRONOME_ACCENTS.PRIMARY]: Object.freeze({
-    kind: 'drum', frequency: 92, pitchDrop: 72, level: 1, duration: 0.15, decay: 25,
+    kind: 'kick', frequency: 118, pitchDrop: 105, level: 1, duration: 0.12, decay: 31,
   }),
   [METRONOME_ACCENTS.SECONDARY]: Object.freeze({
-    kind: 'drum', frequency: 142, pitchDrop: 46, level: 0.62, duration: 0.115, decay: 34,
+    kind: 'kick', frequency: 148, pitchDrop: 74, level: 0.64, duration: 0.1, decay: 39,
   }),
   [METRONOME_ACCENTS.BEAT]: Object.freeze({
-    kind: 'drum', frequency: 210, pitchDrop: 30, level: 0.38, duration: 0.085, decay: 43,
+    kind: 'snare', frequency: 190, pitchDrop: 0, level: 0.34, duration: 0.075, decay: 48,
   }),
   [METRONOME_ACCENTS.OFFBEAT]: Object.freeze({
-    kind: 'hat', frequency: 5100, pitchDrop: 0, level: 0.14, duration: 0.04, decay: 105,
+    kind: 'hat', frequency: 6800, pitchDrop: 0, level: 0.12, duration: 0.035, decay: 120,
   }),
 });
 
@@ -48,6 +48,15 @@ export function renderDrumSamples(sampleRate, accent) {
       const metallic = Math.sin(2 * Math.PI * profile.frequency * time)
         * Math.sin(2 * Math.PI * profile.frequency * 1.417 * time);
       samples[index] = profile.level * envelope * ((noise * 0.72) + (metallic * 0.28));
+      continue;
+    }
+
+    if (profile.kind === 'snare') {
+      phase += (2 * Math.PI * profile.frequency) / sampleRate;
+      const drumHead = Math.sin(phase) + (Math.sin(phase * 1.61) * 0.35);
+      const wireEnvelope = Math.exp(-time * 72);
+      samples[index] = profile.level * envelope
+        * ((drumHead * 0.28) + (noise * wireEnvelope * 0.72));
       continue;
     }
 

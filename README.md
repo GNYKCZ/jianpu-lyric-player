@@ -34,7 +34,7 @@ npm.cmd run preview
 - JSON-backed `SongDocument` loading and validation.
 - 4/4 timing with sixteenth-note lyric onsets and PPQ/tick canonical time.
 - One `MasterPlaybackClock` for play, pause, restart, BPM changes, and seek.
-- Audible 4/4 eighth-note drum pulse with a heavy beat-1, secondary beat-3, lighter beat-2/4, and soft closed-hi-hat-style offbeats.
+- Audible 4/4 eighth-note drum-kit pulse with kick accents on beats 1/3, light snare hits on beats 2/4, and soft closed-hi-hat-style offbeats.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.
 - Previous/current/next measure context with automatic container scrolling.
@@ -58,7 +58,7 @@ Browser UI
 
 `TimelineEngine` expands the performance sequence and derives musical state from ticks. `MasterPlaybackClock` is the only advancing time source. The controller samples that clock with `requestAnimationFrame` and publishes derived state to the UI; the UI never owns lyric timers.
 
-The audible metronome synthesizes drum-like hits and short closed-hi-hat-style offbeats with Web Audio. It schedules each hit from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
+The audible metronome synthesizes a compact kick, snare, and closed-hi-hat-style kit with Web Audio. Beat 1 uses the strongest kick and beat 3 a lighter kick; beats 2/4 use a short snare. It schedules each hit from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
 
 Its eighth-note pulse follows Groove Scribe's practice-metronome behavior, while the 4/4 strength hierarchy follows conventional quadruple meter: beat 1 is strongest, beat 3 has a secondary accent, beats 2/4 are lighter, and offbeats are soft. The implementation is original Web Audio synthesis; no Groove Scribe code, soundfont, or sample is copied.
 

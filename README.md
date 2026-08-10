@@ -34,6 +34,7 @@ npm.cmd run preview
 - JSON-backed `SongDocument` loading and validation.
 - 4/4 timing with sixteenth-note lyric onsets and PPQ/tick canonical time.
 - One `MasterPlaybackClock` for play, pause, restart, BPM changes, and seek.
+- Audible 4/4 eighth-note metronome with primary beat-1, secondary beat-3, regular beat-2/4, and soft offbeat clicks.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.
 - Previous/current/next measure context with automatic container scrolling.
@@ -56,6 +57,10 @@ Browser UI
 ```
 
 `TimelineEngine` expands the performance sequence and derives musical state from ticks. `MasterPlaybackClock` is the only advancing time source. The controller samples that clock with `requestAnimationFrame` and publishes derived state to the UI; the UI never owns lyric timers.
+
+The audible metronome synthesizes short woodblock-like clicks with Web Audio. It schedules each click from the same master-clock tick position: `1 & 2 & 3 & 4 &`. No audio sample or independent metronome timer is included.
+
+Its eighth-note pulse follows Groove Scribe's practice-metronome behavior, while the 4/4 strength hierarchy follows conventional quadruple meter: beat 1 is strongest, beat 3 has a secondary accent, beats 2/4 are lighter, and offbeats are soft. The implementation is original Web Audio synthesis; no Groove Scribe code, soundfont, or sample is copied.
 
 Future image processing stays outside the playback path:
 
@@ -128,6 +133,12 @@ npx.cmd playwright install chromium
 ## Private development material
 
 Keep non-redistributable material in ignored `private/` or `local-fixtures/` directories. Do not commit commercial scores, commercial audio, complete commercial lyrics, credentials, or local caches.
+
+## Metronome references
+
+- [Groove Scribe source](https://github.com/montulli/GrooveScribe) — rhythm UI and selectable metronome subdivisions.
+- [Open Music Theory: quadruple-meter beat hierarchy](https://viva.pressbooks.pub/openmusictheory/chapter/swing-rhythms/).
+- [W3C Web Audio API](https://www.w3.org/TR/webaudio-1.1/) — sample-accurate scheduled audio-source start times.
 
 ## License
 

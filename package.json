@@ -2,8 +2,23 @@
   "name": "jianpu-lyric-player",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Music timeline domain model and validation primitives.",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test test/*.test.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@types/node": "^26.2.0",
+    "eslint": "latest",
+    "typescript": "latest",
+    "vite": "latest"
   }
 }

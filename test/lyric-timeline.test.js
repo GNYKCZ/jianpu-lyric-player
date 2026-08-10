@@ -1,9 +1,7 @@
-'use strict';
-
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const { buildLyricTimeline } = require('../src/song/lyric-timeline');
-const { demoSong } = require('./fixtures/demo-song');
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { buildLyricTimeline } from '../src/song/lyric-timeline.js';
+import { demoSong } from './fixtures/demo-song.js';
 
 test('timeline follows performance sequence and preserves repeated sections', () => {
   const timeline = buildLyricTimeline(demoSong);

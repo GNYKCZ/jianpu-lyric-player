@@ -1,16 +1,14 @@
-'use strict';
-
-const {
+import {
   DEFAULT_PPQ,
   STEPS_PER_4_4_MEASURE,
   measureLengthTicks,
   step16ToTick,
-} = require('./timing');
+} from './timing.js';
 
-const SONG_DOCUMENT_VERSION = 1;
-const SECTION_TYPES = new Set(['VERSE', 'CHORUS', 'OUTRO']);
+export const SONG_DOCUMENT_VERSION = 1;
+export const SECTION_TYPES = new Set(['VERSE', 'CHORUS', 'OUTRO']);
 
-class SongDocumentValidationError extends Error {
+export class SongDocumentValidationError extends Error {
   constructor(issues) {
     super(`SongDocument validation failed: ${issues.join(' ')}`);
     this.name = 'SongDocumentValidationError';
@@ -22,7 +20,7 @@ function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-function validateSongDocument(document) {
+export function validateSongDocument(document) {
   const issues = [];
   if (!isObject(document)) {
     return ['SongDocument must be an object.'];
@@ -47,6 +45,8 @@ function validateSongDocument(document) {
     }
     if (!Number.isInteger(metadata.ppq) || metadata.ppq <= 0) {
       issues.push('metadata.ppq must be a positive integer.');
+    } else if (metadata.ppq % 4 !== 0) {
+      issues.push('metadata.ppq must support integer sixteenth-note ticks.');
     }
     if (typeof metadata.defaultBpm !== 'number' || !Number.isFinite(metadata.defaultBpm) || metadata.defaultBpm <= 0) {
       issues.push('metadata.defaultBpm must be a positive finite number.');
@@ -124,7 +124,10 @@ function validateSongDocument(document) {
               issues.push(`${eventPrefix}.step16 is only supported for 4/4 documents.`);
             } else if (!Number.isInteger(event.step16) || event.step16 < 0 || event.step16 >= STEPS_PER_4_4_MEASURE) {
               issues.push(`${eventPrefix}.step16 must be in the range 0..15.`);
-            } else if (Number.isInteger(metadata.ppq) && event.onsetTicks !== step16ToTick(event.step16, metadata.ppq)) {
+            } else if (Number.isInteger(metadata.ppq)
+              && metadata.ppq > 0
+              && metadata.ppq % 4 === 0
+              && event.onsetTicks !== step16ToTick(event.step16, metadata.ppq)) {
               issues.push(`${eventPrefix}.step16 must agree with onsetTicks.`);
             }
           }
@@ -145,7 +148,7 @@ function validateSongDocument(document) {
   return issues;
 }
 
-function assertValidSongDocument(document) {
+export function assertValidSongDocument(document) {
   const issues = validateSongDocument(document);
   if (issues.length > 0) {
     throw new SongDocumentValidationError(issues);
@@ -153,7 +156,7 @@ function assertValidSongDocument(document) {
   return document;
 }
 
-function loadSongDocument(json) {
+export function loadSongDocument(json) {
   let document;
   try {
     document = typeof json === 'string' ? JSON.parse(json) : json;
@@ -163,17 +166,8 @@ function loadSongDocument(json) {
   return assertValidSongDocument(document);
 }
 
-function createMeasure({ index, lyricEvents = [], lengthTicks = measureLengthTicks() }) {
+export function createMeasure({ index, lyricEvents = [], lengthTicks = measureLengthTicks() }) {
   return { index, lengthTicks, lyricEvents };
 }
 
-module.exports = {
-  DEFAULT_PPQ,
-  SECTION_TYPES,
-  SONG_DOCUMENT_VERSION,
-  SongDocumentValidationError,
-  assertValidSongDocument,
-  createMeasure,
-  loadSongDocument,
-  validateSongDocument,
-};
+export { DEFAULT_PPQ };

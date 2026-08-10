@@ -1,8 +1,6 @@
-'use strict';
-
-const DEFAULT_PPQ = 480;
-const STEPS_PER_4_4_MEASURE = 16;
-const SUBDIVISIONS = Object.freeze(['1', 'e', '&', 'a']);
+export const DEFAULT_PPQ = 480;
+export const STEPS_PER_4_4_MEASURE = 16;
+export const SUBDIVISIONS = Object.freeze(['1', 'e', '&', 'a']);
 
 function assertInteger(value, name) {
   if (!Number.isInteger(value)) {
@@ -17,7 +15,7 @@ function assertPpq(ppq) {
   }
 }
 
-function ticksPerBeat(ppq = DEFAULT_PPQ, denominator = 4) {
+export function ticksPerBeat(ppq = DEFAULT_PPQ, denominator = 4) {
   assertPpq(ppq);
   assertInteger(denominator, 'denominator');
   if (denominator <= 0 || (ppq * 4) % denominator !== 0) {
@@ -26,11 +24,11 @@ function ticksPerBeat(ppq = DEFAULT_PPQ, denominator = 4) {
   return (ppq * 4) / denominator;
 }
 
-function ticksPerSixteenth(ppq = DEFAULT_PPQ) {
+export function ticksPerSixteenth(ppq = DEFAULT_PPQ) {
   return ticksPerBeat(ppq, 4) / 4;
 }
 
-function measureLengthTicks({ numerator = 4, denominator = 4, ppq = DEFAULT_PPQ } = {}) {
+export function measureLengthTicks({ numerator = 4, denominator = 4, ppq = DEFAULT_PPQ } = {}) {
   assertInteger(numerator, 'numerator');
   if (numerator <= 0) {
     throw new RangeError('numerator must be greater than zero.');
@@ -45,7 +43,7 @@ function assertStep16(step16) {
   }
 }
 
-function step16ToTick(step16, ppq = DEFAULT_PPQ) {
+export function step16ToTick(step16, ppq = DEFAULT_PPQ) {
   assertStep16(step16);
   const ticks = ticksPerSixteenth(ppq);
   if (!Number.isInteger(ticks)) {
@@ -54,7 +52,7 @@ function step16ToTick(step16, ppq = DEFAULT_PPQ) {
   return step16 * ticks;
 }
 
-function tickToStep16(tick, ppq = DEFAULT_PPQ) {
+export function tickToStep16(tick, ppq = DEFAULT_PPQ) {
   assertInteger(tick, 'tick');
   const ticks = ticksPerSixteenth(ppq);
   if (!Number.isInteger(ticks) || tick % ticks !== 0) {
@@ -65,7 +63,7 @@ function tickToStep16(tick, ppq = DEFAULT_PPQ) {
   return step16;
 }
 
-function step16ToBeatSubdivision(step16) {
+export function step16ToBeatSubdivision(step16) {
   assertStep16(step16);
   const subdivisionIndex = step16 % SUBDIVISIONS.length;
   return Object.freeze({
@@ -75,7 +73,7 @@ function step16ToBeatSubdivision(step16) {
   });
 }
 
-function beatSubdivisionToStep16(beat, subdivision) {
+export function beatSubdivisionToStep16(beat, subdivision) {
   assertInteger(beat, 'beat');
   if (beat < 1 || beat > 4) {
     throw new RangeError('beat must be in the range 1..4.');
@@ -86,16 +84,3 @@ function beatSubdivisionToStep16(beat, subdivision) {
   }
   return ((beat - 1) * SUBDIVISIONS.length) + subdivisionIndex;
 }
-
-module.exports = {
-  DEFAULT_PPQ,
-  STEPS_PER_4_4_MEASURE,
-  SUBDIVISIONS,
-  beatSubdivisionToStep16,
-  measureLengthTicks,
-  step16ToBeatSubdivision,
-  step16ToTick,
-  tickToStep16,
-  ticksPerBeat,
-  ticksPerSixteenth,
-};

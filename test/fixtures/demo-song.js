@@ -1,6 +1,4 @@
-'use strict';
-
-const { measureLengthTicks, step16ToTick } = require('../../src/song/timing');
+import { measureLengthTicks, step16ToTick } from '../../src/song/timing.js';
 
 const measureLength = measureLengthTicks();
 
@@ -8,7 +6,7 @@ function event(id, text, step16) {
   return { id, text, step16, onsetTicks: step16ToTick(step16) };
 }
 
-const demoSong = {
+export const demoSong = {
   version: 1,
   metadata: {
     title: 'Timeline Demo',
@@ -38,5 +36,3 @@ const demoSong = {
     { sectionId: 'chorus' },
   ],
 };
-
-module.exports = { demoSong };

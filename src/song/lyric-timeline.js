@@ -1,8 +1,6 @@
-'use strict';
+import { assertValidSongDocument } from './song-document.js';
 
-const { assertValidSongDocument } = require('./song-document');
-
-function buildLyricTimeline(document) {
+export function buildLyricTimeline(document) {
   assertValidSongDocument(document);
   const sectionsById = new Map(document.sections.map((section) => [section.id, section]));
   const measures = [];
@@ -12,11 +10,14 @@ function buildLyricTimeline(document) {
     const section = sectionsById.get(reference.sectionId);
     section.measures.forEach((measure, sectionMeasureIndex) => {
       const startTicks = currentTicks;
+      const timelineMeasureIndex = measures.length;
       const events = measure.lyricEvents.map((event) => Object.freeze({
         ...event,
+        occurrenceId: `${performanceIndex}:${sectionMeasureIndex}:${event.id}`,
         absoluteTicks: startTicks + event.onsetTicks,
       }));
       measures.push(Object.freeze({
+        timelineMeasureIndex,
         performanceIndex,
         sectionId: section.id,
         sectionType: section.type,
@@ -38,5 +39,3 @@ function buildLyricTimeline(document) {
     totalTicks: currentTicks,
   });
 }
-
-module.exports = { buildLyricTimeline };

@@ -1,13 +1,11 @@
-'use strict';
-
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const {
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
   SongDocumentValidationError,
   loadSongDocument,
   validateSongDocument,
-} = require('../src/song/song-document');
-const { demoSong } = require('./fixtures/demo-song');
+} from '../src/song/song-document.js';
+import { demoSong } from './fixtures/demo-song.js';
 
 test('loader accepts a valid public SongDocument JSON fixture', () => {
   const loaded = loadSongDocument(JSON.stringify(demoSong));
@@ -24,4 +22,11 @@ test('validator reports invalid step16 timing and unknown sequence references', 
   assert.ok(issues.some((issue) => issue.includes('step16 must agree')));
   assert.ok(issues.some((issue) => issue.includes('must reference a declared section')));
   assert.throws(() => loadSongDocument(invalid), SongDocumentValidationError);
+});
+
+test('validator reports PPQ values that cannot represent integer sixteenths', () => {
+  const invalid = structuredClone(demoSong);
+  invalid.metadata.ppq = 481;
+  const issues = validateSongDocument(invalid);
+  assert.ok(issues.some((issue) => issue.includes('integer sixteenth-note ticks')));
 });

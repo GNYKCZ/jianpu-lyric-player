@@ -1,14 +1,12 @@
-'use strict';
-
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const {
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
   beatSubdivisionToStep16,
   measureLengthTicks,
   step16ToBeatSubdivision,
   step16ToTick,
   tickToStep16,
-} = require('../src/song/timing');
+} from '../src/song/timing.js';
 
 test('step16 maps losslessly to tick, beat, and subdivision', () => {
   for (let step16 = 0; step16 < 16; step16 += 1) {

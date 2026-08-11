@@ -1,4 +1,4 @@
-export const VISUAL_CUE_LEAD_MS = 250;
+export const VISUAL_CUE_LEAD_MS = 50;
 
 function assertFiniteNonNegative(value, name) {
   if (!Number.isFinite(value) || value < 0) {

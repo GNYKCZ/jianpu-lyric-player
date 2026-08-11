@@ -37,7 +37,7 @@ npm.cmd run preview
 - Five-second audible and visual count-in before playback starts at tick zero.
 - Audible 4/4 eighth-note drum-kit pulse with kick accents on beats 1/3, light snare hits on beats 2/4, and soft closed-hi-hat-style offbeats.
 - Beginner guitar coordination cues at all eight eighth-note positions in each 4/4 measure, displayed as `root 3 2 3 | root 3 2 3`, with root notes visually distinguished.
-- A tempo-aware 250ms visual lookahead for lyric, picking, cursor, measure, and beat cues during playback; audio and canonical ticks remain exact.
+- A tempo-aware 50ms visual lookahead for lyric, picking, cursor, measure, and beat cues during playback; audio and canonical ticks remain exact.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.
 - A single-viewport desktop practice workspace centered on one unified lyric-and-picking timeline.

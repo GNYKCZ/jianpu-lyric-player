@@ -2,6 +2,7 @@ import './style.css';
 import { TimelineEngine } from './engine/timeline-engine.js';
 import { AudibleMetronome } from './playback/audible-metronome.js';
 import { LyricPlaybackController } from './playback/lyric-playback-controller.js';
+import { deriveVisualCueTicks } from './playback/visual-cue-lookahead.js';
 import { loadSelectedSong } from '#song-loader';
 import {
   GUITAR_PICKING_PATTERN,
@@ -151,7 +152,7 @@ async function startApp() {
     upcomingPickCell?.classList.remove('upcoming');
     activePickCell = null;
     upcomingPickCell = null;
-    if (isActivelyPlaying && practice.isHit) {
+    if (isActivelyPlaying) {
       activePickCell = measureList.querySelector(
         `[data-measure="${state.timelineMeasureIndex}"] [data-pick-step="${practice.currentPick.step16}"]`,
       );
@@ -168,6 +169,13 @@ async function startApp() {
 
   controller.subscribe((state) => {
     const isCountingIn = state.countInRemaining !== null;
+    const visualState = {
+      ...state,
+      ...engine.getStateAtTicks(deriveVisualCueTicks({
+        ...state,
+        ppq: songDocument.metadata.ppq,
+      })),
+    };
     element('play-button').textContent = state.isPlaying
       ? (isCountingIn ? '■ 取消倒计时' : 'Ⅱ 暂停')
       : '▶ 播放';
@@ -178,29 +186,29 @@ async function startApp() {
     seekInput.disabled = isCountingIn;
     measureSelect.disabled = isCountingIn;
     metronomeEnabled.disabled = isCountingIn;
-    element('section-value').textContent = sectionNames[state.sectionType];
-    element('measure-value').textContent = `M${state.measureIndex}`;
-    element('beat-value').textContent = `${state.beat} ${state.subdivision}`;
+    element('section-value').textContent = sectionNames[visualState.sectionType];
+    element('measure-value').textContent = `M${visualState.measureIndex}`;
+    element('beat-value').textContent = `${visualState.beat} ${visualState.subdivision}`;
     element('tick-value').textContent = `${Math.round(state.ticks)} / ${state.totalTicks} ticks`;
     seekInput.value = String(Math.round(state.ticks));
-    measureSelect.value = String(state.timelineMeasureIndex);
-    renderTimelinePicking(state);
+    measureSelect.value = String(visualState.timelineMeasureIndex);
+    renderTimelinePicking(visualState);
 
-    if (activeEventId !== state.currentLyricEvent?.occurrenceId) {
+    if (activeEventId !== visualState.currentLyricEvent?.occurrenceId) {
       if (activeEventId) measureList.querySelector(`[data-event="${activeEventId}"]`)?.classList.remove('active');
-      activeEventId = state.currentLyricEvent?.occurrenceId ?? null;
+      activeEventId = visualState.currentLyricEvent?.occurrenceId ?? null;
       if (activeEventId) measureList.querySelector(`[data-event="${activeEventId}"]`)?.classList.add('active');
     }
 
     const currentCard = /** @type {HTMLElement | null} */ (
-      measureList.querySelector(`[data-measure="${state.timelineMeasureIndex}"]`)
+      measureList.querySelector(`[data-measure="${visualState.timelineMeasureIndex}"]`)
     );
-    currentCard?.style.setProperty('--playhead', `${(state.measureTicks / state.measureLengthTicks) * 100}%`);
-    if (activeMeasureIndex !== state.timelineMeasureIndex) {
+    currentCard?.style.setProperty('--playhead', `${(visualState.measureTicks / visualState.measureLengthTicks) * 100}%`);
+    if (activeMeasureIndex !== visualState.timelineMeasureIndex) {
       if (activeMeasureIndex >= 0) {
         measureList.querySelector(`[data-measure="${activeMeasureIndex}"]`)?.classList.remove('current');
       }
-      activeMeasureIndex = state.timelineMeasureIndex;
+      activeMeasureIndex = visualState.timelineMeasureIndex;
       currentCard?.classList.add('current');
       if (currentCard) {
         const listRect = measureList.getBoundingClientRect();

@@ -23,6 +23,9 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('.measure-card')).toHaveCount(11);
   await expect(page.locator('.measure-card.current')).toContainText('主歌');
   await expect(page.locator('.lyric-event.active')).toHaveText('今');
+  await expect(page.getByText('SINGING CUE')).toHaveCount(0);
+  await expect(page.locator('.measure-card.current .lyric-row')).toBeVisible();
+  await expect(page.locator('.measure-card.current .guitar-row')).toBeVisible();
   await expect(page.locator('#metronome-enabled')).toBeChecked();
   await expect(page.locator('.measure-card').first().locator('.pulse-primary')).toHaveCount(1);
   await expect(page.locator('.measure-card').first().locator('.pulse-secondary')).toHaveCount(1);
@@ -72,6 +75,30 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await page.locator('#metronome-enabled').uncheck();
   await expect(page.locator('#metronome-enabled')).not.toBeChecked();
   await page.locator('#metronome-volume').fill('45');
+});
+
+test('desktop practice controls and lyric timeline fit in one viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/');
+
+  await expect(page.locator('.practice-workspace')).toBeVisible();
+  await expect(page.locator('.guitar-practice-panel')).toBeVisible();
+  await expect(page.locator('.timeline-panel')).toBeVisible();
+  await expect(page.locator('.measure-card.current .lyric-event')).toHaveCount(4);
+  await expect(page.locator('.measure-card.current .guitar-cell.pick-root, .measure-card.current .guitar-cell.pick-inner')).toHaveCount(8);
+
+  const layout = await page.evaluate(() => {
+    const workspace = globalThis.document.querySelector('.practice-workspace')?.getBoundingClientRect();
+    const currentCard = globalThis.document.querySelector('.measure-card.current')?.getBoundingClientRect();
+    return {
+      pageFits: globalThis.document.documentElement.scrollHeight <= globalThis.innerHeight,
+      workspaceFits: Boolean(workspace && workspace.top >= 0 && workspace.bottom <= globalThis.innerHeight),
+      currentCardVisible: Boolean(currentCard
+        && currentCard.top < globalThis.innerHeight
+        && currentCard.bottom > 0),
+    };
+  });
+  expect(layout).toEqual({ pageFits: true, workspaceFits: true, currentCardVisible: true });
 });
 
 test('measure seek scrolls the selected measure into view', async ({ page }) => {

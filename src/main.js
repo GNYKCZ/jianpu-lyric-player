@@ -242,9 +242,6 @@ async function startApp() {
     element('section-value').textContent = sectionNames[state.sectionType];
     element('measure-value').textContent = `M${state.measureIndex}`;
     element('beat-value').textContent = `${state.beat} ${state.subdivision}`;
-    element('lyric-value').textContent = state.currentLyricEvent?.text
-      ? `当前歌词：${state.currentLyricEvent.text}`
-      : '等待歌词';
     element('tick-value').textContent = `${Math.round(state.ticks)} / ${state.totalTicks} ticks`;
     seekInput.value = String(Math.round(state.ticks));
     measureSelect.value = String(state.timelineMeasureIndex);

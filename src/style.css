@@ -166,76 +166,18 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 .now-playing span { color: #65716c; font-size: 0.78rem; }
 .now-playing strong { font-size: 1.6rem; }
 
-.progress-panel { margin-top: 8px; padding: 20px 28px 18px; border-radius: 8px; }
-
-.lyric-stage {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: end;
-  gap: 4px 24px;
-  margin-bottom: 17px;
-  padding: 0 2px 16px;
-  border-bottom: 1px solid rgba(182, 107, 43, 0.18);
-}
-
-.lyric-stage .eyebrow { margin-bottom: 2px; }
-
-.lyric-stage-label {
-  color: #52635d;
-  font-size: 0.78rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-}
-
-#lyric-value {
-  justify-self: end;
-  color: #b85d22;
-  font-size: 1rem;
-}
-
-.practice-lyric-line {
-  grid-column: 1 / -1;
-  display: flex;
-  min-height: 50px;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding-top: 8px;
-  color: #2d3d38;
-  font-size: clamp(1.45rem, 3vw, 2rem);
-  font-weight: 820;
-  letter-spacing: 0.08em;
-}
-
-.practice-lyric-char {
-  display: inline-grid;
-  min-width: 1.18em;
-  min-height: 1.5em;
-  place-items: center;
-  padding: 0.08em 0.13em;
-  border-radius: 0.3em;
-  transition: color 100ms ease, background 100ms ease, transform 100ms ease, box-shadow 100ms ease;
-}
-
-.practice-lyric-char.active {
-  color: #fff;
-  background: #df6c20;
-  box-shadow: 0 7px 18px rgb(223 108 32 / 28%);
-  transform: translateY(-2px) scale(1.13);
-}
-
-.practice-lyric-empty {
-  color: #88938f;
-  font-size: 1rem;
-  font-weight: 650;
-  letter-spacing: 0;
-}
-
+.progress-panel { margin-top: 8px; padding: 12px 28px 10px; border-radius: 8px; }
 #seek-input { width: 100%; accent-color: #b66b2b; }
-.progress-meta { display: flex; justify-content: space-between; margin-top: 8px; color: #65716c; font-size: 0.8rem; }
+.progress-meta { display: flex; justify-content: flex-end; margin-top: 3px; color: #65716c; font-size: 0.72rem; }
+
+.practice-workspace {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
 
 .guitar-practice-panel {
-  margin-top: 8px;
+  margin-top: 0;
   padding: 26px 28px;
   border-color: rgba(29, 93, 168, 0.38);
   border-radius: 8px;
@@ -456,7 +398,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   font-size: 0.78rem;
 }
 
-.timeline-panel { margin-top: 8px; padding: 28px; border-radius: 8px 8px 24px 24px; }
+.timeline-panel { margin-top: 0; padding: 28px; border-radius: 8px 8px 24px 24px; }
 .timeline-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 18px; }
 
 .measure-list {
@@ -549,7 +491,199 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 
 .error-message { padding: 16px; border-radius: 12px; color: #842d24; background: #f9dbd5; }
 
-@media (max-width: 760px) {
+@media (min-width: 560px) {
+  body { height: 100vh; overflow: hidden; }
+
+  .app-shell {
+    display: grid;
+    width: min(1240px, calc(100% - 24px));
+    height: 100vh;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    gap: 6px;
+    padding: 10px 0;
+  }
+
+  .hero {
+    align-items: center;
+    padding: 11px 20px;
+    border-radius: 18px 18px 7px 7px;
+  }
+
+  .hero .eyebrow { margin-bottom: 3px; }
+  .hero h1 { margin-bottom: 2px; font-size: clamp(1.45rem, 2.4vw, 2.15rem); }
+  .subtitle { font-size: 0.82rem; }
+  .mode-button { padding: 7px 14px; }
+
+  .transport-panel {
+    grid-template-areas:
+      "buttons bpm measure now"
+      "metronome metronome metronome metronome";
+    grid-template-columns: auto 70px minmax(130px, 1fr) auto;
+    gap: 6px 10px;
+    margin-top: 0;
+    padding: 7px 12px;
+  }
+
+  .transport-buttons { grid-area: buttons; }
+  .bpm-field { grid-area: bpm; }
+  .metronome-field {
+    display: grid;
+    grid-area: metronome;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+  }
+  .measure-field { grid-area: measure; }
+  .now-playing { grid-area: now; }
+
+  .icon-button,
+  .play-button,
+  .field input,
+  .field select,
+  .metronome-controls { min-height: 38px; }
+
+  .metronome-field small { display: none; }
+  .metronome-field > span { white-space: nowrap; }
+  .now-playing strong { font-size: 1.35rem; }
+
+  .progress-panel {
+    margin-top: 0;
+    padding: 6px 18px 5px;
+  }
+
+  .progress-meta { margin-top: 0; line-height: 1; }
+
+  .practice-workspace {
+    min-height: 0;
+    grid-template-columns: minmax(235px, 0.72fr) minmax(0, 1.28fr);
+    margin-top: 0;
+  }
+
+  .guitar-practice-panel,
+  .timeline-panel { min-height: 0; }
+
+  .guitar-practice-panel {
+    padding: 14px 16px;
+    overflow-y: auto;
+  }
+
+  .practice-heading { align-items: stretch; flex-direction: column; gap: 7px; }
+  .practice-heading h2 { font-size: 1.2rem; }
+  .practice-heading p:not(.eyebrow) { margin-top: 3px; font-size: 0.75rem; }
+
+  .pattern-display {
+    width: 100%;
+    min-width: 0;
+    gap: 2px;
+    padding: 7px 9px;
+  }
+
+  .pattern-display strong { font-size: 0.94rem; letter-spacing: 0.07em; }
+
+  .picking-sequence {
+    gap: 4px;
+    margin-top: 11px;
+    padding: 7px;
+  }
+
+  .picking-sequence-cell { min-height: 53px; border-radius: 9px; }
+  .picking-sequence-cell strong { font-size: 1.15rem; }
+
+  .guitar-cue {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 11px;
+    padding: 11px 13px;
+    border-radius: 14px;
+  }
+
+  .guitar-now { grid-template-columns: 60px 1fr; column-gap: 8px; }
+  #guitar-cue-token { width: 60px; height: 60px; border-radius: 13px; font-size: 2.2rem; }
+  #guitar-cue-action { font-size: 1.08rem; }
+  #guitar-cue-position { font-size: 1rem; }
+  #guitar-next-action { font-size: 0.82rem; }
+  .guitar-guidance { gap: 5px; }
+  .practice-note { margin-top: 8px; font-size: 0.68rem; line-height: 1.45; }
+
+  .timeline-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 13px 14px 14px;
+    overflow: hidden;
+    border-radius: 8px 8px 18px 8px;
+  }
+
+  .timeline-heading {
+    flex: 0 0 auto;
+    margin-bottom: 7px;
+  }
+
+  .timeline-heading .eyebrow { margin-bottom: 3px; }
+  .timeline-heading h2 { font-size: 1.2rem; }
+  .timeline-hint { font-size: 0.72rem; }
+
+  .measure-list {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    padding: max(68px, calc((100vh - 500px) / 2)) 6px;
+    border-radius: 13px;
+  }
+
+  .measure-card {
+    margin: 7px 0;
+    padding: 12px 15px 15px;
+    border-radius: 12px;
+  }
+
+  .measure-card-heading { margin-bottom: 8px; }
+  .step-grid { padding-bottom: 13px; }
+  .lyric-row { margin-top: 5px; }
+  .lyric-cell { min-height: 24px; }
+  .row-caption { margin-top: 6px; }
+  .guitar-cell { min-height: 22px; font-size: 1rem; }
+}
+
+@media (min-width: 900px) {
+  .transport-panel {
+    grid-template-areas: "buttons bpm metronome measure now";
+    grid-template-columns: auto minmax(80px, 0.38fr) minmax(230px, 1fr) minmax(170px, 0.72fr) auto;
+    gap: 12px;
+  }
+
+  .metronome-field {
+    display: grid;
+    grid-template-columns: auto minmax(110px, 1fr);
+  }
+
+  .practice-workspace {
+    grid-template-columns: minmax(390px, 0.78fr) minmax(0, 1.22fr);
+  }
+
+  .practice-heading { align-items: start; flex-direction: row; gap: 10px; }
+  .pattern-display { width: auto; min-width: 178px; }
+  .guitar-cue { grid-template-columns: minmax(135px, 0.65fr) 1.35fr; }
+  .guitar-now { grid-template-columns: auto 1fr; column-gap: 14px; }
+  #guitar-cue-token { width: 70px; height: 70px; border-radius: 15px; font-size: 2.6rem; }
+}
+
+@media (min-width: 560px) and (max-width: 899px) {
+  .practice-heading p:not(.eyebrow),
+  .practice-note,
+  .timeline-hint { display: none; }
+
+  .picking-sequence { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .picking-sequence-cell { min-width: 0; }
+  .picking-sequence-cell strong { font-size: 0.98rem; }
+
+  .measure-card { padding-inline: 7px; }
+  .step-row { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+  .label-row { font-size: 0.62rem; }
+  .lyric-row { font-size: 0.95rem; }
+  .guitar-cell { font-size: 0.9rem; }
+}
+
+@media (max-width: 559px) {
   .app-shell { width: min(100% - 18px, 1120px); padding-top: 12px; }
   .hero { align-items: start; padding: 24px 20px; }
   .transport-panel { grid-template-columns: 1fr 1fr; padding: 20px; }
@@ -557,10 +691,7 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   .metronome-field { grid-column: 1 / -1; }
   .now-playing { justify-items: start; }
   .progress-panel { padding-inline: 18px; }
-  .lyric-stage { grid-template-columns: 1fr; align-items: start; gap: 8px; }
-  #lyric-value { justify-self: start; }
-  .practice-lyric-line { gap: 2px; font-size: clamp(1.3rem, 7vw, 1.7rem); }
-  .progress-meta span:first-child { max-width: 65%; }
+  .practice-workspace { grid-template-columns: 1fr; }
   .timeline-panel { padding: 18px 10px; }
   .guitar-practice-panel { padding: 22px 18px; }
   .practice-heading { align-items: stretch; flex-direction: column; gap: 16px; }

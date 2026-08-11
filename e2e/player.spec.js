@@ -125,6 +125,24 @@ test('timeline picking cue follows all eight master-clock eighth-note positions'
   }
 });
 
+test('playing lyric and picking cues lead canonical progress by about 250ms', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#metronome-enabled').uncheck();
+  await page.locator('#bpm-input').fill('120');
+  await page.locator('#bpm-input').blur();
+  await page.locator('#seek-input').fill('200');
+  await expect(page.locator('.lyric-event.active')).toHaveText('今');
+
+  await page.locator('#play-button').click();
+  await expect(page.locator('.measure-card.current .guitar-cell.active')).toHaveText('3');
+  await expect(page.locator('.lyric-event.active')).toHaveText('天', { timeout: 300 });
+
+  const actualTicks = Number((await page.locator('#tick-value').textContent())?.split(' ')[0]);
+  expect(actualTicks).toBeLessThan(480);
+  await page.locator('#play-button').click();
+  await expect(page.locator('.lyric-event.active')).toHaveText('今');
+});
+
 test('starting from the beginning shows a cancellable five-second count-in', async ({ page }) => {
   await page.goto('/');
   await page.locator('#play-button').click();

@@ -31,13 +31,7 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await expect(page.locator('.measure-card').first().locator('.pulse-secondary')).toHaveCount(1);
   await expect(page.locator('.measure-card').first().locator('.pulse-beat')).toHaveCount(2);
   await expect(page.locator('.measure-card').first().locator('.pulse-offbeat')).toHaveCount(4);
-  await expect(page.locator('#guitar-cue')).toBeVisible();
-  await expect(page.locator('#guitar-cue-status')).toHaveText('按播放开始');
-  await expect(page.locator('#guitar-cue-position')).toHaveText('第 1 拍');
-  await expect(page.locator('#guitar-cue-token')).toHaveText('根');
-  await expect(page.locator('#picking-sequence .picking-sequence-cell')).toHaveCount(8);
-  await expect(page.locator('#picking-sequence .pick-root')).toHaveCount(2);
-  await expect(page.locator('#picking-sequence .pick-inner')).toHaveCount(6);
+  await expect(page.locator('.guitar-practice-panel')).toHaveCount(0);
   await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-root')).toHaveCount(2);
   await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-inner')).toHaveCount(6);
   await expect(page.locator('.measure-card').first().locator('.guitar-cell.pick-root, .guitar-cell.pick-inner')).toHaveText([
@@ -77,28 +71,28 @@ test('demo player loads and its transport controls stay synchronized', async ({ 
   await page.locator('#metronome-volume').fill('45');
 });
 
-test('desktop practice controls and lyric timeline fit in one viewport', async ({ page }) => {
+test('desktop controls and the unified lyric-picking timeline fit in one viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
 
   await expect(page.locator('.practice-workspace')).toBeVisible();
-  await expect(page.locator('.guitar-practice-panel')).toBeVisible();
+  await expect(page.locator('.guitar-practice-panel')).toHaveCount(0);
   await expect(page.locator('.timeline-panel')).toBeVisible();
   await expect(page.locator('.measure-card.current .lyric-event')).toHaveCount(4);
   await expect(page.locator('.measure-card.current .guitar-cell.pick-root, .measure-card.current .guitar-cell.pick-inner')).toHaveCount(8);
 
   const layout = await page.evaluate(() => {
-    const workspace = globalThis.document.querySelector('.practice-workspace')?.getBoundingClientRect();
+    const timeline = globalThis.document.querySelector('.timeline-panel')?.getBoundingClientRect();
     const currentCard = globalThis.document.querySelector('.measure-card.current')?.getBoundingClientRect();
     return {
       pageFits: globalThis.document.documentElement.scrollHeight <= globalThis.innerHeight,
-      workspaceFits: Boolean(workspace && workspace.top >= 0 && workspace.bottom <= globalThis.innerHeight),
+      timelineFits: Boolean(timeline && timeline.top >= 0 && timeline.bottom <= globalThis.innerHeight),
       currentCardVisible: Boolean(currentCard
         && currentCard.top < globalThis.innerHeight
         && currentCard.bottom > 0),
     };
   });
-  expect(layout).toEqual({ pageFits: true, workspaceFits: true, currentCardVisible: true });
+  expect(layout).toEqual({ pageFits: true, timelineFits: true, currentCardVisible: true });
 });
 
 test('measure seek scrolls the selected measure into view', async ({ page }) => {
@@ -117,19 +111,17 @@ test('measure seek scrolls the selected measure into view', async ({ page }) => 
   })).toBeLessThan(12);
 });
 
-test('guitar cue follows all eight master-clock eighth-note positions', async ({ page }) => {
+test('timeline picking cue follows all eight master-clock eighth-note positions', async ({ page }) => {
   await page.goto('/');
   const seek = page.locator('#seek-input');
-  const cue = page.locator('#guitar-cue');
-  const token = page.locator('#guitar-cue-token');
   const expected = ['根', '3', '2', '3', '根', '3', '2', '3'];
 
   for (let index = 0; index < expected.length; index += 1) {
     await seek.fill(String(index * 240));
-    await expect(token).toHaveText(expected[index]);
-    await expect(page.locator('#guitar-cue-position')).toContainText(`第 ${Math.floor(index / 2) + 1} 拍`);
-    if (index === 0 || index === 4) await expect(cue).toHaveClass(/root-cue/);
-    else await expect(cue).not.toHaveClass(/root-cue/);
+    const cue = page.locator('.measure-card.current .guitar-cell.upcoming');
+    await expect(cue).toHaveText(expected[index]);
+    if (index === 0 || index === 4) await expect(cue).toHaveClass(/pick-root/);
+    else await expect(cue).not.toHaveClass(/pick-root/);
   }
 });
 

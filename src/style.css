@@ -252,6 +252,11 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   border-radius: 7px;
   outline: 2px solid rgb(232 145 38 / 28%);
 }
+.guitar-cell.pick-root.upcoming {
+  color: #fff;
+  background: #185da8;
+  outline-color: rgb(232 145 38 / 72%);
+}
 .guitar-cell.active {
   color: #fff;
   background: #df6c20;

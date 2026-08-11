@@ -30,7 +30,6 @@ button { cursor: pointer; }
 .hero,
 .transport-panel,
 .progress-panel,
-.guitar-practice-panel,
 .timeline-panel {
   border: 1px solid rgba(23, 34, 31, 0.12);
   background: rgba(255, 255, 252, 0.78);
@@ -176,228 +175,6 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   margin-top: 8px;
 }
 
-.guitar-practice-panel {
-  margin-top: 0;
-  padding: 26px 28px;
-  border-color: rgba(29, 93, 168, 0.38);
-  border-radius: 8px;
-  overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(232, 243, 255, 0.92), rgba(255, 255, 255, 0.96) 48%, rgba(238, 246, 255, 0.9));
-  box-shadow: 0 18px 54px rgba(24, 80, 145, 0.11);
-}
-
-.guitar-practice-panel .eyebrow { color: #185a9d; }
-
-.practice-heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.practice-heading p:not(.eyebrow) {
-  margin: 6px 0 0;
-  color: #52677d;
-}
-
-.pattern-display {
-  display: grid;
-  min-width: min(340px, 100%);
-  gap: 5px;
-  padding: 12px 18px;
-  border: 1px solid rgba(29, 93, 168, 0.24);
-  border-radius: 14px;
-  color: #60748a;
-  background: rgba(255, 255, 255, 0.78);
-  text-align: center;
-}
-
-.pattern-display span {
-  font-size: 0.7rem;
-  font-weight: 850;
-  letter-spacing: 0.12em;
-}
-
-.pattern-display strong {
-  color: #1459a6;
-  font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: 1.16rem;
-  letter-spacing: 0.12em;
-}
-
-.picking-sequence {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(34px, 1fr));
-  gap: 7px;
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid rgba(29, 93, 168, 0.2);
-  border-radius: 16px;
-  background: rgba(221, 237, 255, 0.66);
-}
-
-.picking-sequence-cell {
-  position: relative;
-  display: grid;
-  min-height: 72px;
-  place-content: center;
-  justify-items: center;
-  gap: 3px;
-  border: 1px solid rgba(29, 93, 168, 0.28);
-  border-radius: 11px;
-  color: #175a9d;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 5px 13px rgba(23, 77, 137, 0.07);
-  transition: color 90ms ease, background 90ms ease, transform 90ms ease, box-shadow 90ms ease;
-}
-
-.picking-sequence-cell:nth-child(5)::before {
-  position: absolute;
-  top: 14%;
-  bottom: 14%;
-  left: -5px;
-  width: 2px;
-  border-radius: 99px;
-  background: rgba(29, 93, 168, 0.38);
-  content: "";
-}
-
-.picking-sequence-cell small {
-  color: inherit;
-  font-size: 0.68rem;
-  font-weight: 800;
-  opacity: 0.68;
-}
-
-.picking-sequence-cell strong {
-  font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: 1.45rem;
-}
-
-.picking-sequence-cell.pick-root {
-  border-color: #1459a6;
-  color: #fff;
-  background: linear-gradient(145deg, #1d69bb, #124b91);
-  box-shadow: 0 8px 18px rgba(20, 89, 166, 0.2);
-}
-
-.picking-sequence-cell.upcoming {
-  outline: 3px solid rgba(232, 145, 38, 0.42);
-  outline-offset: 1px;
-  transform: translateY(-2px);
-}
-
-.picking-sequence-cell.active {
-  border-color: #df6c20;
-  color: #fff;
-  background: #df6c20;
-  box-shadow: 0 8px 24px rgba(223, 108, 32, 0.33);
-  transform: translateY(-4px) scale(1.04);
-}
-
-.picking-sequence-cell.pick-root.active {
-  border-color: #0b437f;
-  background: #0b437f;
-  outline: 4px solid rgba(240, 156, 51, 0.72);
-}
-
-.guitar-cue {
-  --cue-color: #49677f;
-  display: grid;
-  grid-template-columns: minmax(180px, 0.58fr) 1.42fr;
-  gap: 26px;
-  align-items: center;
-  margin-top: 20px;
-  padding: 20px 24px;
-  border: 1px solid color-mix(in srgb, var(--cue-color) 32%, transparent);
-  border-radius: 18px;
-  background: linear-gradient(120deg, color-mix(in srgb, var(--cue-color) 12%, white), #fff 58%);
-  transition: border-color 100ms ease, background 100ms ease, transform 100ms ease;
-}
-
-.guitar-cue[data-state="prepare"] { --cue-color: #cf8425; }
-.guitar-cue[data-state="hit"] {
-  --cue-color: #df6c20;
-  transform: scale(1.012);
-  box-shadow: 0 12px 36px rgb(223 108 32 / 20%);
-}
-
-.guitar-cue.root-cue { --cue-color: #1459a6; }
-
-.guitar-cue.root-cue[data-state="hit"] {
-  --cue-color: #0b437f;
-  box-shadow: 0 0 0 4px rgb(240 156 51 / 42%), 0 14px 38px rgb(11 67 127 / 23%);
-}
-
-.guitar-now {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  column-gap: 14px;
-}
-
-#guitar-cue-status {
-  grid-column: 1 / -1;
-  color: var(--cue-color);
-  font-size: 0.8rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-#guitar-cue-token {
-  display: grid;
-  width: 92px;
-  height: 92px;
-  place-items: center;
-  border-radius: 20px;
-  color: #fff;
-  background: var(--cue-color);
-  font-family: "Cascadia Mono", Consolas, monospace;
-  font-size: clamp(2.6rem, 7vw, 4rem);
-  line-height: 1;
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--cue-color) 28%, transparent);
-}
-
-#guitar-cue-action { font-size: 1.35rem; font-weight: 900; }
-
-.guitar-cue[data-state="hit"] #guitar-cue-token {
-  animation: pick-hit 150ms ease-out;
-}
-
-@keyframes pick-hit {
-  0% { transform: translateY(-7px) scale(0.86); }
-  70% { transform: translateY(2px) scale(1.1); }
-  100% { transform: translateY(0) scale(1); }
-}
-
-.guitar-guidance { display: grid; gap: 8px; }
-#guitar-cue-position { color: var(--cue-color); font-size: 1.15rem; font-weight: 900; }
-#guitar-next-action { color: #30423c; font-size: 1rem; }
-
-.readiness-track {
-  height: 9px;
-  margin-top: 5px;
-  border-radius: 99px;
-  overflow: hidden;
-  background: #e4e7e3;
-}
-
-#guitar-readiness {
-  display: block;
-  width: 0;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--cue-color);
-  transition: width 35ms linear;
-}
-
-.practice-note {
-  margin: 14px 0 0;
-  color: #73807b;
-  font-size: 0.78rem;
-}
-
 .timeline-panel { margin-top: 0; padding: 28px; border-radius: 8px 8px 24px 24px; }
 .timeline-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 18px; }
 
@@ -406,9 +183,15 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   overflow-y: auto;
   scroll-behavior: smooth;
   scroll-snap-type: y proximity;
-  padding: 220px 8px;
+  padding: 8px;
   border-radius: 18px;
   background: #eae8df;
+}
+
+.measure-list::after {
+  display: block;
+  height: 220px;
+  content: "";
 }
 
 .measure-card {
@@ -555,55 +338,11 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
 
   .practice-workspace {
     min-height: 0;
-    grid-template-columns: minmax(235px, 0.72fr) minmax(0, 1.28fr);
+    grid-template-columns: minmax(0, 1fr);
     margin-top: 0;
   }
 
-  .guitar-practice-panel,
   .timeline-panel { min-height: 0; }
-
-  .guitar-practice-panel {
-    padding: 14px 16px;
-    overflow-y: auto;
-  }
-
-  .practice-heading { align-items: stretch; flex-direction: column; gap: 7px; }
-  .practice-heading h2 { font-size: 1.2rem; }
-  .practice-heading p:not(.eyebrow) { margin-top: 3px; font-size: 0.75rem; }
-
-  .pattern-display {
-    width: 100%;
-    min-width: 0;
-    gap: 2px;
-    padding: 7px 9px;
-  }
-
-  .pattern-display strong { font-size: 0.94rem; letter-spacing: 0.07em; }
-
-  .picking-sequence {
-    gap: 4px;
-    margin-top: 11px;
-    padding: 7px;
-  }
-
-  .picking-sequence-cell { min-height: 53px; border-radius: 9px; }
-  .picking-sequence-cell strong { font-size: 1.15rem; }
-
-  .guitar-cue {
-    grid-template-columns: 78px minmax(0, 1fr);
-    gap: 12px;
-    margin-top: 11px;
-    padding: 11px 13px;
-    border-radius: 14px;
-  }
-
-  .guitar-now { grid-template-columns: 60px 1fr; column-gap: 8px; }
-  #guitar-cue-token { width: 60px; height: 60px; border-radius: 13px; font-size: 2.2rem; }
-  #guitar-cue-action { font-size: 1.08rem; }
-  #guitar-cue-position { font-size: 1rem; }
-  #guitar-next-action { font-size: 0.82rem; }
-  .guitar-guidance { gap: 5px; }
-  .practice-note { margin-top: 8px; font-size: 0.68rem; line-height: 1.45; }
 
   .timeline-panel {
     display: flex;
@@ -626,9 +365,11 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
     flex: 1 1 auto;
     height: auto;
     min-height: 0;
-    padding: max(68px, calc((100vh - 500px) / 2)) 6px;
+    padding: 6px;
     border-radius: 13px;
   }
+
+  .measure-list::after { height: max(130px, calc((100vh - 500px) / 2)); }
 
   .measure-card {
     margin: 7px 0;
@@ -656,25 +397,10 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
     grid-template-columns: auto minmax(110px, 1fr);
   }
 
-  .practice-workspace {
-    grid-template-columns: minmax(390px, 0.78fr) minmax(0, 1.22fr);
-  }
-
-  .practice-heading { align-items: start; flex-direction: row; gap: 10px; }
-  .pattern-display { width: auto; min-width: 178px; }
-  .guitar-cue { grid-template-columns: minmax(135px, 0.65fr) 1.35fr; }
-  .guitar-now { grid-template-columns: auto 1fr; column-gap: 14px; }
-  #guitar-cue-token { width: 70px; height: 70px; border-radius: 15px; font-size: 2.6rem; }
 }
 
 @media (min-width: 560px) and (max-width: 899px) {
-  .practice-heading p:not(.eyebrow),
-  .practice-note,
   .timeline-hint { display: none; }
-
-  .picking-sequence { grid-template-columns: repeat(8, minmax(0, 1fr)); }
-  .picking-sequence-cell { min-width: 0; }
-  .picking-sequence-cell strong { font-size: 0.98rem; }
 
   .measure-card { padding-inline: 7px; }
   .step-row { grid-template-columns: repeat(16, minmax(0, 1fr)); }
@@ -693,14 +419,6 @@ h2 { margin-bottom: 0; font-size: 1.45rem; }
   .progress-panel { padding-inline: 18px; }
   .practice-workspace { grid-template-columns: 1fr; }
   .timeline-panel { padding: 18px 10px; }
-  .guitar-practice-panel { padding: 22px 18px; }
-  .practice-heading { align-items: stretch; flex-direction: column; gap: 16px; }
-  .pattern-display { width: 100%; min-width: 0; }
-  .picking-sequence { gap: 4px; padding: 7px; }
-  .picking-sequence-cell { min-height: 62px; border-radius: 9px; }
-  .picking-sequence-cell strong { font-size: 1.2rem; }
-  .guitar-cue { grid-template-columns: 1fr; gap: 14px; padding: 18px; }
-  .guitar-now { grid-template-columns: 92px 1fr; }
   .timeline-heading { padding: 0 8px; }
   .timeline-hint { display: none; }
   .measure-list { padding-inline: 4px; }

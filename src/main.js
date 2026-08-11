@@ -6,7 +6,6 @@ import { loadSelectedSong } from '#song-loader';
 import {
   GUITAR_PICKING_PATTERN,
   getGuitarPracticeState,
-  pickActionName,
 } from './practice/guitar-practice.js';
 import { step16ToBeatSubdivision, tickToStep16 } from './song/timing.js';
 
@@ -82,13 +81,6 @@ function createMeasureCard(measure, ppq) {
   return card;
 }
 
-function describePickPosition(pickEvent) {
-  const position = step16ToBeatSubdivision(pickEvent.step16);
-  const measurePrefix = pickEvent.measureOffset === 1 ? '下一小节 ' : '';
-  const subdivision = position.subdivision === '1' ? '' : ` ${position.subdivision}`;
-  return `${measurePrefix}第 ${position.beat} 拍${subdivision}`;
-}
-
 function applyGuitarPattern(measureList) {
   const eventsByStep = new Map(
     GUITAR_PICKING_PATTERN.events.map((event) => [event.step16, event]),
@@ -103,18 +95,6 @@ function applyGuitarPattern(measureList) {
     } else {
       cell.removeAttribute('aria-label');
     }
-  });
-}
-
-function buildPickingSequence(container) {
-  GUITAR_PICKING_PATTERN.events.forEach((event, index) => {
-    const position = step16ToBeatSubdivision(event.step16);
-    const cell = document.createElement('span');
-    cell.className = `picking-sequence-cell ${event.role === 'root' ? 'pick-root' : 'pick-inner'}`;
-    cell.dataset.pickIndex = String(index);
-    cell.innerHTML = `<small>${position.subdivision === '1' ? position.beat : '&'}</small><strong>${event.label}</strong>`;
-    cell.setAttribute('aria-label', `${describePickPosition(event)} ${pickActionName(event)}`);
-    container.append(cell);
   });
 }
 
@@ -148,71 +128,34 @@ async function startApp() {
   });
 
   applyGuitarPattern(measureList);
-  buildPickingSequence(element('picking-sequence'));
 
   let activeMeasureIndex = -1;
   let activeEventId = null;
   let activePickCell = null;
   let upcomingPickCell = null;
-  let activeSequenceCell = null;
-  let upcomingSequenceCell = null;
 
-  function renderGuitarPractice(state) {
+  function renderTimelinePicking(state) {
     const practice = getGuitarPracticeState({
       measureTicks: state.measureTicks,
       measureLengthTicks: state.measureLengthTicks,
       ppq: songDocument.metadata.ppq,
       timeSignature: songDocument.metadata.timeSignature,
     });
-    const cue = element('guitar-cue');
     const isCountingIn = state.countInRemaining !== null;
     const isActivelyPlaying = state.isPlaying && !isCountingIn;
     const showCurrentPick = isCountingIn
       || (isActivelyPlaying && practice.isHit)
       || (!state.isPlaying && practice.isHit);
     const shownPick = showCurrentPick ? practice.currentPick : practice.nextPick;
-    let cueState = 'idle';
-    let cueStatus = '按播放开始';
-    if (isCountingIn) {
-      cueState = 'prepare';
-      cueStatus = '倒计时后开始';
-    } else if (isActivelyPlaying && practice.isHit) {
-      cueState = 'hit';
-      cueStatus = '现在弹';
-    } else if (isActivelyPlaying && practice.isPreparing) {
-      cueState = 'prepare';
-      cueStatus = '准备';
-    } else if (isActivelyPlaying) {
-      cueState = 'follow';
-      cueStatus = '跟稳节拍';
-    }
-
-    cue.dataset.state = cueState;
-    cue.classList.toggle('root-cue', shownPick.role === 'root');
-    element('guitar-cue-status').textContent = cueStatus;
-    element('guitar-cue-token').textContent = shownPick.label;
-    element('guitar-cue-action').textContent = pickActionName(shownPick);
-    element('guitar-cue-position').textContent = describePickPosition(shownPick);
-    element('guitar-next-action').textContent = `下一次：${describePickPosition(practice.nextPick)} · ${practice.nextPick.label} ${pickActionName(practice.nextPick)}`;
-    element('guitar-readiness').style.width = `${isActivelyPlaying ? practice.readiness * 100 : 0}%`;
-
     activePickCell?.classList.remove('active');
     upcomingPickCell?.classList.remove('upcoming');
-    activeSequenceCell?.classList.remove('active');
-    upcomingSequenceCell?.classList.remove('upcoming');
     activePickCell = null;
     upcomingPickCell = null;
-    activeSequenceCell = null;
-    upcomingSequenceCell = null;
     if (isActivelyPlaying && practice.isHit) {
       activePickCell = measureList.querySelector(
         `[data-measure="${state.timelineMeasureIndex}"] [data-pick-step="${practice.currentPick.step16}"]`,
       );
       activePickCell?.classList.add('active');
-      activeSequenceCell = element('picking-sequence').querySelector(
-        `[data-pick-index="${practice.currentPick.index}"]`,
-      );
-      activeSequenceCell?.classList.add('active');
     }
     const timelineUpcomingPick = isActivelyPlaying ? practice.nextPick : shownPick;
     const nextMeasureIndex = state.timelineMeasureIndex
@@ -221,10 +164,6 @@ async function startApp() {
       `[data-measure="${nextMeasureIndex}"] [data-pick-step="${timelineUpcomingPick.step16}"]`,
     );
     upcomingPickCell?.classList.add('upcoming');
-    upcomingSequenceCell = element('picking-sequence').querySelector(
-      `[data-pick-index="${timelineUpcomingPick.index}"]`,
-    );
-    upcomingSequenceCell?.classList.add('upcoming');
   }
 
   controller.subscribe((state) => {
@@ -245,7 +184,7 @@ async function startApp() {
     element('tick-value').textContent = `${Math.round(state.ticks)} / ${state.totalTicks} ticks`;
     seekInput.value = String(Math.round(state.ticks));
     measureSelect.value = String(state.timelineMeasureIndex);
-    renderGuitarPractice(state);
+    renderTimelinePicking(state);
 
     if (activeEventId !== state.currentLyricEvent?.occurrenceId) {
       if (activeEventId) measureList.querySelector(`[data-event="${activeEventId}"]`)?.classList.remove('active');

@@ -39,7 +39,7 @@ npm.cmd run preview
 - Beginner guitar coordination cues at all eight eighth-note positions in each 4/4 measure, displayed as `root 3 2 3 | root 3 2 3`, with root notes visually distinguished.
 - Current section, measure, beat, subdivision, and lyric derivation.
 - Lyric sustain from one onset until the next onset.
-- A single-viewport desktop practice workspace with guitar cues beside the lyric-and-picking timeline.
+- A single-viewport desktop practice workspace centered on one unified lyric-and-picking timeline.
 - Previous/current/next measure context with automatic container scrolling.
 - Precise `1 e & a` debug view and a compact view.
 - A fictional sequence with `VERSE → CHORUS → VERSE → CHORUS → CHORUS → OUTRO`.

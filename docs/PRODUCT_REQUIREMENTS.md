@@ -50,6 +50,8 @@ An active lyric begins at its onset and remains active until the next lyric onse
 
 There must be one musical time source. The metronome, lyric highlighting, cursor, and scrolling derive their state from `currentTicks` on that master clock. UI rendering may use `requestAnimationFrame`, but separate timers must not synchronize these features. Tempo changes alter tick-to-real-time mapping, never the stored musical positions. Pause, resume, restart, and seek must preserve musical position without drift.
 
+During active playback, the UI applies an approximately 250ms visual lookahead to lyric, picking, cursor, measure, and beat cues so a beginner has time to react and ordinary display latency is masked. The lookahead is converted from milliseconds to ticks using the current BPM and PPQ, and is disabled while paused or during count-in. It must not alter stored timing, the master-clock position, the progress value, metronome/audio scheduling, or verified Ground Truth.
+
 The default audible 4/4 practice pulse uses eighth notes (`1 & 2 & 3 & 4 &`). It uses a familiar compact drum-kit palette: beat 1 is the strongest kick, beat 3 is a secondary kick, beats 2 and 4 are lighter snare hits, and each offbeat is a soft closed-hi-hat-style subdivision cue. Audio scheduling must derive from the master clock rather than introduce another musical timer.
 
 Playback from tick zero has a five-second audible and visual count-in. The musical clock remains at tick zero until the count-in ends, then the first downbeat, cursor, and lyric timeline begin together. Resume and non-zero seek do not repeat the count-in; restarting active playback does.

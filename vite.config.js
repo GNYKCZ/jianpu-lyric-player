@@ -3,6 +3,7 @@ import path from 'node:path';
 import { localFixturePlugin } from './scripts/local-fixture-plugin.js';
 
 export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/jianpu-lyric-player/' : '/',
   plugins: command === 'serve' ? [localFixturePlugin()] : [],
   resolve: {
     alias: {

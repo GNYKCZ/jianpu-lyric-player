@@ -6,6 +6,14 @@ The repository uses fictional public demo data only. Commercial scores, complete
 
 中文安装、操作和本地私有 fixture 加载方法见 [中文使用说明](docs/使用说明.md)。
 
+## Public demo
+
+The fictional public Demo Song is deployed at:
+
+https://gnykcz.github.io/jianpu-lyric-player/
+
+GitHub Pages builds only the production bundle. Ignored `private/` and `local-fixtures/` data, including commercial-song validation data, is never uploaded or available from the public site.
+
 ## Run locally
 
 Requirements: Node.js 20 or newer and npm.
